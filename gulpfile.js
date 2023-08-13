@@ -24,9 +24,6 @@ const title = package.name;
 const id_name = `${title.replace(/\s/g, '')}_${getDateString(true)}`;
 const version = package.version;
 
-// monetization pointer - needs to be set in package.json
-const monetization = package.monetization;
-
 // set the output directory
 const dir = argv.dir || 'public';
 
@@ -153,7 +150,6 @@ function css(callback) {
 // prepare index.html
 function html(callback) {
 	src('src/index.html', { allowEmpty: true })
-		.pipe(replace('{MONETIZATION}', monetization, replaceOptions))
 		.pipe(replace('{TITLE}', title, replaceOptions))
 		.pipe(gulpif(social != false && mobile != false, htmlreplace({'mobile': mobile, 'social': social, 'css': 'rep_css', 'js': 'rep_js'})))
 		.pipe(gulpif(social === false && mobile != false, htmlreplace({'mobile': mobile, 'social': '', 'css': 'rep_css', 'js': 'rep_js'})))
