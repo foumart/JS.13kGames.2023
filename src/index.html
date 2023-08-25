@@ -11,15 +11,20 @@
 <!-- build:social -->
 <!-- endbuild -->
 
-<!-- build:css -->
-<link rel="stylesheet" href="styles/style.css">
-<!-- endbuild -->
+rep_css
 
 <body>
+	<div id="mainDiv" ontouchstart ontouchend>
+		<!-- <canvas id="pixelCanvas" width="184" height="328"></canvas>
+		<canvas id="staticCanvas" width="1080" height="1920"></canvas> -->
+		<canvas id="gameCanvas" width="1080" height="1920"></canvas>
+		<div id="uiDiv">
+			<div id="gameDiv"></div>
+			<div id="menuDiv"></div>
+		</div>
+	</div>
 
-	<!-- build:js -->
-	<script src="scripts/app.js"></script>
-	<!-- endbuild -->
+	rep_js
 
 </body>
 
