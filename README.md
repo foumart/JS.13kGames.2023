@@ -1,4 +1,4 @@
-# JS13kGames 2023 - TBD
+# Moai Alley - game made for JS13kGames 2023
 
 ## Installation
 Run **`npm install`** to install build dependencies.
