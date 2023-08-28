@@ -1,5 +1,4 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=0" />
-<meta name="monetization" content="{MONETIZATION}">
 
 <link rel="icon" type="image/png" sizes="any" href="ico.png">
 <link rel="manifest" href="mf.webmanifest">
@@ -12,15 +11,16 @@
 <!-- build:social -->
 <!-- endbuild -->
 
-<!-- build:css -->
-<link rel="stylesheet" href="styles/style.css">
-<!-- endbuild -->
+rep_css
 
 <body>
+	<div id="mainDiv" ontouchstart ontouchend>
+		<canvas id="gameCanvas"></canvas>
+		<div id="gameContainer"></div>
+		<div id="uiDiv"></div>
+	</div>
 
-	<!-- build:js -->
-	<script src="scripts/app.js"></script>
-	<!-- endbuild -->
+	rep_js
 
 </body>
 

@@ -1,6 +1,7 @@
 * {
 	padding: 0;
 	margin: 0;
+	overflow: hidden;
 }
 
 body {
@@ -8,6 +9,34 @@ body {
 }
 
 div, canvas {
+	position: absolute;
 	user-select: none;
-	touch-action: none;
+	-webkit-tap-highlight-color: transparent;
+}
+
+canvas {
+	pointer-events: none;
+}
+
+#pixelCanvas {
+	image-rendering: pixelated;
+}
+
+#uiDiv {
+	font-size: 64px;
+}
+
+.button {
+	position: relative;
+	cursor: pointer;
+	color: white;
+}
+
+.icon {
+	width: 80px;
+	margin: 9px;
+}
+
+.label {
+	font-weight: bold;
 }
