@@ -25,14 +25,13 @@ class Button extends Tile {
 	}
 
 	draw() {
-		if (!this.btn) return;
 		this.btn.style.left = this.getX() + "px";
 		this.btn.style.top = this.getY() + "px";
 		this.btn.style.width = this.size + "px";
 		this.btn.style.height = this.size + "px";
 	}
 
-	hilight(_color){
+	/*hilight(_color){
 		this.btn.style.backgroundColor = _color || "";
 	}
 
@@ -58,5 +57,5 @@ class Button extends Tile {
 
 	hilightAttacked(){
 		this.btn.style.backgroundColor = "rgba(255, 0, 32, 0.5)";
-	}
+	}*/
 }

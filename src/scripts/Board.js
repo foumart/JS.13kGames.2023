@@ -49,6 +49,8 @@ class Board {
 		console.log(this.pathData);
 
 		this.createButtons();
+
+		this.clear();
 	}
 
 	extractData(map, data) {
@@ -70,6 +72,7 @@ class Board {
 
 	createButtons() {
 		this.buttons = [];
+		this.buttonsArr = [];
 		let x, y, arr, button;
 		for(y = 0; y < this.boardHeight; y++) {
 			arr = [];
@@ -78,6 +81,7 @@ class Board {
 				button.btn.addEventListener("mouseover", this.buttonOver.bind(this));
 				button.btn.addEventListener("mouseout", this.buttonOut.bind(this));
 				button.btn.addEventListener(eventName, this.clickButton.bind(this));
+				this.buttonsArr.push(button);
 				arr.push(button);
 			}
 			this.buttons.push(arr);
@@ -103,9 +107,16 @@ class Board {
 		}
 	}
 
+	// reposition buttons
+	resize() {
+		for (let i = 0; i < this.buttonsArr.length; i ++) {
+			this.buttonsArr[i].resize();
+		}
+	}
+
 	// draw the board grid frames and the unit selection stroke on the canvas
 	draw() {
-		this.clear();
+		//this.clear();
 		gameCanvas.getContext("2d").clearRect(0, 0, gameCanvas.width, gameCanvas.height);
 		for(let y = 0; y < this.boardHeight; y++) {
 			for(let x = 0; x < this.boardWidth; x++) {
@@ -116,21 +127,20 @@ class Board {
 		}
 
 		for (let i = 0; i < this.units.length; i ++) {
-			this.units[i].draw();
+			this.units[i].resize();
 		}
 	}
-
 
 	buttonOver(event) {
 		let unit = this.field[event.target.y][event.target.x];
 		let btn = this.buttons[event.target.y][event.target.x];
-		btn.hilightEmpty();
+		//btn.hilightEmpty();
 	}
 
 	buttonOut(event){
 		let unit = this.field[event.target.y][event.target.x];
 		let btn = this.buttons[event.target.y][event.target.x];
-		btn.hilight();
+		//btn.hilight();
 	}
 
 	clickButton(event){

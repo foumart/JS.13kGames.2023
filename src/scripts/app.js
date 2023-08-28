@@ -38,16 +38,6 @@ function getEmojiCode(code) {
 function initializeGame() {
 	window.addEventListener("resize", resize, false);
 
-	if (mobile) {
-		// mobile events
-		mainDiv.ontouchstart = touchStartHandler;
-		mainDiv.ontouchend = touchEndHandler;
-	} else {
-		// desktop events
-		mainDiv.onmousedown = touchStartHandler;
-		mainDiv.onmouseup = touchEndHandler;
-	}
-
 	document.addEventListener("keydown", onKeyDown);
 	document.addEventListener("keyup", onKeyUp);
 
@@ -82,27 +72,34 @@ function generateUIButton(div, code, handler) {
 function resize(e) {
 	width = window.innerWidth;
 	height = window.innerHeight;
-	if (width > height) {
-		gameCanvas.width = height;
-		gameCanvas.height = height;
-	} else {
-		gameCanvas.width = width;
-		gameCanvas.height = width;
-	}
-
-	if (game) game.resize();
 
 	// set html positionings
 	uiDiv.style.width = mainDiv.style.width = width + 'px';
 	uiDiv.style.height = mainDiv.style.height = height + 'px';
 
 	if (width > height) {
+		gameCanvas.width = height;
+		gameCanvas.height = height;
+		gameContainer.style.width = height + "px";
+		gameContainer.style.height = height + "px";
+		if (state) uiDiv.style.width = ((width - height) / 2) + 'px';
+	} else {
+		gameCanvas.width = width;
+		gameCanvas.height = width;
+		gameContainer.style.width = width + "px";
+		gameContainer.style.height = width + "px";
+		if (state) uiDiv.style.height = ((height - width) / 2) + 'px';
+	}
+
+	if (game) game.resize();
+
+	if (width > height) {
 		gameCanvas.style.left = gameContainer.style.left = "50%";
-		gameCanvas.style.top = gameCanvas.style.marginTop = 0;
+		gameCanvas.style.top = gameCanvas.style.marginTop = 0; gameContainer.style.top = gameContainer.style.marginTop = 0;
 		gameCanvas.style.marginLeft = gameContainer.style.marginLeft = `-${height / 2}px`;
 	} else {
 		gameCanvas.style.top = gameContainer.style.top = "50%";
-		gameCanvas.style.left = gameCanvas.style.marginLeft = 0;
+		gameCanvas.style.left = gameCanvas.style.marginLeft = 0; gameContainer.style.left = gameContainer.style.marginLeft = 0;
 		gameCanvas.style.marginTop = gameContainer.style.marginTop = `-${width / 2}px`;
 	}
 
@@ -110,7 +107,10 @@ function resize(e) {
 	uiDiv.children[0].style = `float:right;transform:scale(${this.getScale(width, height)});transform-origin: top right;`;
 	uiDiv.children[1].style = `float:left;transform:scale(${this.getScale(width, height)});transform-origin: top left;`;
 
-	if (uiDiv.children[2]) uiDiv.children[2].style = `left:50%;transform:translateX(-50%) translateY(-50%);top:50%;`;
+	if (uiDiv.children[2]) {
+		uiDiv.children[2].style = `left:50%;transform:translateX(-50%) translateY(-50%);top:50%;`;
+		uiDiv.children[2].addEventListener(eventName, this.switchState.bind(this));
+	}
 }
 
 function getScale(h, w){
@@ -139,16 +139,6 @@ function onKeyUp(event) {
 	//touchEndHandler();
 }
 
-function touchStartHandler(event) {
-	if (!state) {
-		if (event.target.id == "uiDiv") switchState();
-	} else {
-
-	}
-
-	//console.log("touchStartHandler",event.target);
-}
-
 function switchState() {
 	if (!state) {
 		state = 1;
@@ -159,16 +149,6 @@ function switchState() {
 
 	}
 }
-
-function touchEndHandler(event) {
-	if (!state) {
-		return;
-	}
-
-	console.log("touchEndHandler",event.target);
-}
-
-
 
 function toggleSound(event) {
 	console.log("toggleSound");
