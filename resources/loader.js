@@ -21,5 +21,5 @@ function toggleFullscreen() {
 // loader
 function init() {
 	updateFullscreen();
-	runGame();
+	initializeGame();
 }

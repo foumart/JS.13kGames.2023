@@ -1,26 +1,28 @@
+// TODO: remove this - all elements with IDs are global objects in js
 const mainDiv = document.getElementById("mainDiv");
 const uiDiv = document.getElementById("uiDiv");
-const gameDiv = document.getElementById("gameDiv");
-const menuDiv = document.getElementById("menuDiv");
+const gameCanvas = document.getElementById("gameCanvas");
+const gameContainer = document.getElementById("gameContainer");
 
-menuDiv.style.width = gameDiv.style.width = uiDiv.style.width = '1080px';
-gameDiv.style.height = uiDiv.style.height = '1920px';
-menuDiv.style.height = '128px';
+// global vars
+const mobile = isTouchDevice();
+var eventName = isTouchDevice() ? "touchstart" : "click";
+function isTouchDevice() {
+	return ("ontouchstart" in window && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent));
+}
+//var passive = {passive:true};
 
-const mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 let state = 0;
 let paused = false;
 
 // global sizes
-const hardWidth = 1080;
-const hardHeight = 1920;
 let width;
 let height;
 let canvasScale;
 
 const resources = ['533', '50a', '5d1', '39b', '518', '39a', '5b1'];
 
-var game;
+let game;
 
 // onclick="console.log(this.innerHTML.codePointAt(0)+' : '+this.innerHTML.codePointAt(0).toString(16))"
 // 🗿  U+1F5FF &#128511; \1F5FF :moyai:
@@ -33,9 +35,8 @@ function getEmojiCode(code) {
 	return `&#x1F${resources[code]};`;
 }
 
-function runGame() {
+function initializeGame() {
 	window.addEventListener("resize", resize, false);
-	resize();
 
 	if (mobile) {
 		// mobile events
@@ -51,47 +52,69 @@ function runGame() {
 	document.addEventListener("keyup", onKeyUp);
 
 	createUI();
+	resize();
 }
 
 function createUI() {
-	menuDiv.innerHTML = "";
+	uiDiv.innerHTML = "";
 
-	generateUIButton(menuDiv, 0, toggleFullscreen, "float:right;" + (state ? "transform:scale(0.75)" : "margin:20px"));
-	generateUIButton(menuDiv, 1, toggleSound, "float:left;" + (state ? "transform:scale(0.75)" : "margin:20px 28px"));
+	generateUIButton(uiDiv, 0, toggleFullscreen);
+	generateUIButton(uiDiv, 1, toggleSound);
 
 	if (!state) {
-		generateUIButton(menuDiv, "Start New Game", switchState, "position:fixed;left:340px;top:900px");
+		// Generate Main Menu
+		generateUIButton(uiDiv, "Start New Game", switchState);
+	} else {
+		// Generate In-Game UI
+
 	}
 }
 
-function generateUIButton(div, code, handler, style) {
+function generateUIButton(div, code, handler) {
 	const button = document.createElement('div');
 	button.addEventListener(mobile ? "touchstart" : "mousedown", handler.bind(this));
 	button.innerHTML = code >= 0 ? getEmojiCode(code) : code;
 	button.className = "button " + (code >= 0 ? "icon" : "label");
 	button.id = "button_" + code;
-	button.style = style;
 	div.appendChild(button);
 }
 
 function resize(e) {
 	width = window.innerWidth;
 	height = window.innerHeight;
-	canvasScale = getScale();
-	mainDiv.style.transform = `scale(${canvasScale})`;
-	mainDiv.style.width = hardWidth + 'px';
-	mainDiv.style.height = hardHeight + 'px';
-	mainDiv.style.top = `${(height - hardHeight) / 2}px`;
-	mainDiv.style.left = `${(width - hardWidth) / 2}px`;
-	//e = gameCanvas.getBoundingClientRect();
-	//offsetX = e.left;
-	//offsetY = e.top;
+	if (width > height) {
+		gameCanvas.width = height;
+		gameCanvas.height = height;
+	} else {
+		gameCanvas.width = width;
+		gameCanvas.height = width;
+	}
+
+	if (game) game.resize();
+
+	// set html positionings
+	uiDiv.style.width = mainDiv.style.width = width + 'px';
+	uiDiv.style.height = mainDiv.style.height = height + 'px';
+
+	if (width > height) {
+		gameCanvas.style.left = gameContainer.style.left = "50%";
+		gameCanvas.style.top = gameCanvas.style.marginTop = 0;
+		gameCanvas.style.marginLeft = gameContainer.style.marginLeft = `-${height / 2}px`;
+	} else {
+		gameCanvas.style.top = gameContainer.style.top = "50%";
+		gameCanvas.style.left = gameCanvas.style.marginLeft = 0;
+		gameCanvas.style.marginTop = gameContainer.style.marginTop = `-${width / 2}px`;
+	}
+
+	// TODO: UI
+	uiDiv.children[0].style = `float:right;transform:scale(${this.getScale(width, height)});transform-origin: top right;`;
+	uiDiv.children[1].style = `float:left;transform:scale(${this.getScale(width, height)});transform-origin: top left;`;
+
+	if (uiDiv.children[2]) uiDiv.children[2].style = `left:50%;transform:translateX(-50%) translateY(-50%);top:50%;`;
 }
 
 function getScale(h, w){
-	h = (height / hardHeight);
-	w = (width / hardWidth)
-	return h < w ? h : w;
+	return (h < w ? h : w) / (state ? 1500 : 1000);
 }
 
 const keysHeld = [];
@@ -102,6 +125,7 @@ function onKeyDown(event) {console.log(event.keyCode)
 		} else if (event.keyCode == 80) {// P pause
 			paused = !paused;
 		} else if (event.keyCode == 82) {// R reset
+			resize();
 			//reset
 		} else if (event.keyCode == 13) {
 			debugger
@@ -112,13 +136,12 @@ function onKeyDown(event) {console.log(event.keyCode)
 }
 
 function onKeyUp(event) {
-	touchEndHandler();
+	//touchEndHandler();
 }
 
 function touchStartHandler(event) {
-	//if (event.target == menuDiv.firstChild || event.target == menuDiv.children[1]) return;
 	if (!state) {
-		if (event.target.id == "menuDiv") switchState();
+		if (event.target.id == "uiDiv") switchState();
 	} else {
 
 	}
@@ -131,6 +154,7 @@ function switchState() {
 		state = 1;
 		createUI();
 		startGame();
+		resize();
 	} else {
 
 	}
@@ -152,6 +176,5 @@ function toggleSound(event) {
 
 function startGame() {
 	game = new Game();
-	//initVariables();
-	//resize();
+	game.init();
 }
