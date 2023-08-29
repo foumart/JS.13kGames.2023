@@ -7,7 +7,7 @@ class Element {
 		this.context = this.canvas.getContext("2d");
 
 		// board squares
-		this.boardWidth = boardWidth;7
+		this.boardWidth = boardWidth;
 		this.boardHeight = boardHeight;
 
 		this.elementSize = this.canvas.width / this.boardWidth;

@@ -5,17 +5,30 @@ class Game {
 		this.stage = 1;
 		this.turn = 0;
 		this.step = 0;
-		this.initialized = false;
 		this.randoms = [];
 		for (let i = 0; i < 99; i ++) {
 			this.randoms.push(Math.random());
 		}
 		Game.instance = this;
+		
+		this.initialized = true;
+		this.initStage();
+		this.start();
 	}
 
-	init() {
-		this.initialized = true;
+	start() {
+		this.board.draw();
+		setInterval(() => {
+			if (state == 1) {
+				this.step ++;
+				this.board.draw();
+			} else {
+				console.log("STOPPED");
+			}
+		}, 1000 / 60);
+	}
 
+	initStage() {
 		const stageData = StageData.getStageData(this.stage);
 		this.stageName = stageData.name;
 		this.unitX = stageData.x;
@@ -24,12 +37,6 @@ class Game {
 		this.boardHeight = stageData.height;
 
 		this.board = new Board(stageData);
-		this.board.draw();
-
-		setInterval(() => {
-			this.step ++;
-			this.board.draw();
-		}, 1000 / 30);
 	}
 
 	resize() {

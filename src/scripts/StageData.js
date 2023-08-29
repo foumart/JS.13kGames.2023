@@ -8,9 +8,22 @@ class StageData {
 		return {
 			name: "Stage 1",
 			width: 5, height: 5, x: 2, y: 0,
+			map: "9580033c000c",
+			data: "00007c424ec2c",
+			path: "     26d",
+		};
+	}
+
+
+
+	//? initial test
+	/*static get Stage1() {
+		return {
+			name: "Stage 1",
+			width: 5, height: 5, x: 2, y: 0,
 			map: "958003003",//"A8030600"
 			data: "001c0c8c4",
 			path: "      3a    f95   6    2",
 		};
-	}
+	}*/
 }
