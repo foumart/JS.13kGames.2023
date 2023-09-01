@@ -1,7 +1,7 @@
 class MapTile extends Tile {
 	
-	constructor(boardWidth, boardHeight, x, y, type) {
-		super(boardWidth, boardHeight, x, y, type);
+	constructor(x, y, type) {
+		super(x, y, type);
 	}
 
 	resize() {

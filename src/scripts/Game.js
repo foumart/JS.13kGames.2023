@@ -1,8 +1,8 @@
 class Game {
 
-	constructor() {
+	constructor(stage) {
 		if (Game.instance) return Game.instance;
-		this.stage = 1;
+		this.stage = stage || stage;
 		this.turn = 0;
 		this.step = 0;
 		this.randoms = [];
@@ -18,12 +18,18 @@ class Game {
 
 	start() {
 		this.board.draw();
-		setInterval(() => {
-			if (state == 1) {
+		this.loop = setInterval(() => {
+			if (state <= 1) {
 				this.step ++;
 				this.board.draw();
 			} else {
-				console.log("STOPPED");
+				console.log("STOPPED", this.stage);
+				clearInterval(this.loop);
+				const stageData = StageData.getStageData(this.stage);
+				this.stageName = stageData.name;
+				this.board.updateStageData(stageData);
+				this.start();
+				state = 1;
 			}
 		}, 1000 / 60);
 	}
@@ -31,11 +37,13 @@ class Game {
 	initStage() {
 		const stageData = StageData.getStageData(this.stage);
 		this.stageName = stageData.name;
-		this.unitX = stageData.x;
-		this.unitY = stageData.y;
-		this.boardWidth = stageData.width;
-		this.boardHeight = stageData.height;
+		this.board = new Board(stageData);
+	}
 
+	reloadStage() {
+		const stageData = StageData.getStageData(this.stage);
+		this.stageName = stageData.name;
+		this.board.destroy();
 		this.board = new Board(stageData);
 	}
 

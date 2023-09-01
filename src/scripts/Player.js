@@ -1,7 +1,7 @@
 class Player extends Unit {
 	
-	constructor(boardWidth, boardHeight, x, y) {
-		super(boardWidth, boardHeight, x, y, 5);
+	constructor(x, y) {
+		super(x, y, 6);
 	}
 	
 }

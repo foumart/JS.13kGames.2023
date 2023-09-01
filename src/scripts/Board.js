@@ -2,8 +2,8 @@ class Board {
 	
 	constructor(stageData) {
 
-		this.boardWidth = stageData.width;
-		this.boardHeight = stageData.height;
+		this.boardWidth = stageData.size;
+		this.boardHeight = stageData.size;
 		this.map = stageData.map.split('');
 		this.path = stageData.path.split('');
 		this.data = stageData.data.split('');
@@ -13,6 +13,11 @@ class Board {
 		}
 
 		Board.instance = this;
+
+		this.scale = !state ? 0.01 : 0.8;
+		this.tilt = !state ? 0.5 : 0.9;
+		this.tileOffsetX = 0;// general stage tiles horizontal offset
+		this.tileOffsetY = 0.5;// general stage tiles vertical offset
 
 		// used for data compression
 		// TODO: use binary => hex, ex: "A8030600"
@@ -27,12 +32,13 @@ class Board {
 		this.unitsData = [];
 		this.pathData = [];
 
-		for (let y = 0; y < this.boardHeight; y++) {
+		let x, y;
+		for (y = 0; y < this.boardHeight; y++) {
 			this.mapData.push([]);
 			this.unitsData.push([]);
 			this.pathData.push([]);
-			for (let x = 0; x < this.boardWidth; x++) {
-				this.mapData[y].push(0);
+			for (x = 0; x < this.boardWidth; x++) {
+				this.mapData[y].push(10);
 				this.unitsData[y].push(0);
 				this.pathData[y].push(-1);
 			}
@@ -42,14 +48,15 @@ class Board {
 		this.extractHex(this.path, this.pathData);
 		this.extractData(this.data, this.unitsData);
 
-		//this.unitsData[stageData.y][stageData.x] = 5;
 		this.createPlayer(stageData.x, stageData.y);
 
-		console.log(this.mapData);
-		console.log(this.unitsData);
-		console.log(this.pathData);
+		if (state) {
+			console.log(this.mapData);
+			console.log(this.unitsData);
+			console.log(this.pathData);
 
-		this.createButtons();
+			this.createButtons();
+		}
 
 		// Create a pattern, offscreen
 		const patternCanvas = document.createElement("canvas");
@@ -74,7 +81,7 @@ class Board {
 	}
 
 	createPlayer(x, y) {
-		this.player = new Player(this.boardWidth, this.boardHeight, x, y);
+		this.player = new Player(x, y);
 	}
 
 	extractData(map, data) {
@@ -101,7 +108,7 @@ class Board {
 		for(y = 0; y < this.boardHeight; y++) {
 			arr = [];
 			for(x = 0; x < this.boardWidth; x++) {
-				button = new Button(this.boardWidth, this.boardHeight, x, y);
+				button = new Button(x, y);
 				button.btn.addEventListener("mouseover", this.buttonOver.bind(this));
 				button.btn.addEventListener("mouseout", this.buttonOut.bind(this));
 				button.btn.addEventListener(eventName, this.clickButton.bind(this));
@@ -116,18 +123,25 @@ class Board {
 		this.field = [];
 		this.path = [];
 		this.units = [];
-		let x, y, fieldArr, pathArr, unitsArr, unitType;
+		let x, y, fieldArr, pathArr, mapType, unitType;
 		for(y = 0; y < this.boardHeight; y++) {
 			fieldArr = [];
 			pathArr = [];
-			unitsArr = [];
 			for(x = 0; x < this.boardWidth; x++) {
-				unitType = this.mapData[y][x];
-				fieldArr.push(new MapTile(this.boardWidth, this.boardHeight, x, y, unitType));
-				pathArr.push(new PathTile(this.boardWidth, this.boardHeight, x, y, this.pathData[y][x]));
-				if (this.unitsData[y][x] > 0) this.units.push(new Unit(this.boardWidth, this.boardHeight, x, y, this.unitsData[y][x]));
-				if (unitType == 3) {
-					this.units.push(new Obstacle(this.boardWidth, this.boardHeight, x, y, 6));
+				mapType = this.mapData[y][x];
+				fieldArr.push(new MapTile(x, y, mapType));
+				pathArr.push(new PathTile(x, y, this.pathData[y][x]));
+				if (mapType == 3) {
+					this.units.push(new Obstacle(x, y, 4));
+				}
+
+				unitType = this.unitsData[y][x];
+				if (unitType > 0) {
+					// on the initial level make sure to place moai instead of rocks
+					// (level compression only records 2 bits of data: empty, palm, tree, rock)
+					if (mapType == 1 && unitType == 3 && !state) unitType = 5;
+
+					this.units.push(new Unit(x, y, unitType));
 				}
 			}
 			this.field.push(fieldArr);
@@ -137,15 +151,20 @@ class Board {
 
 	// reposition buttons
 	resize() {
-		for (let i = 0; i < this.buttonsArr.length; i ++) {
+		if (this.buttonsArr) for (let i = 0; i < this.buttonsArr.length; i ++) {
 			this.buttonsArr[i].resize();
 		}
 	}
 
 	// draw the board grid frames and the unit selection stroke on the canvas
 	draw() {
-		//this.clear();
-		gameCanvas.getContext("2d").clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+		const ctx = gameCanvas.getContext("2d");
+		ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+		if (state) {
+			ctx.fillStyle = "#28f";
+			ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+		}
+
 		for(let y = 0; y < this.boardHeight; y++) {
 			for(let x = 0; x < this.boardWidth; x++) {
 				//this.buttons[y][x].hilight();
@@ -154,11 +173,14 @@ class Board {
 			}
 		}
 
+		let drawn;
 		for (let i = 0; i < this.units.length; i ++) {
+			if (!drawn && this.player.y < this.units[i].y) {
+				drawn = true;
+				this.player.resize();
+			}
 			this.units[i].resize();
 		}
-
-		this.player.resize();
 	}
 
 	buttonOver(event) {
@@ -176,5 +198,14 @@ class Board {
 	clickButton(event){
 		let unit = this.field[event.target.y][event.target.x];
 		console.log(unit);
+	}
+
+	destroy() {
+		Board.instance = null;
+		
+	}
+
+	updateStageData(stageData) {
+		
 	}
 }

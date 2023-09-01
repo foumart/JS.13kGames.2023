@@ -5,7 +5,7 @@
 }
 
 body {
-	background-color: black;
+	background-color: #000828;
 }
 
 div, canvas {
@@ -18,7 +18,7 @@ canvas {
 	pointer-events: none;
 }
 
-#pixelCanvas {
+#gameCanvas {
 	image-rendering: pixelated;
 }
 
@@ -37,6 +37,18 @@ canvas {
 	margin: 9px;
 }
 
-.label {
+/* .label {
 	font-weight: bold;
+} */
+
+.earth {
+	font-size: 64px;
+	left: 45%;
+	top: 45%;
+}
+
+.animate {
+	transition: transform 2s;
+	transform-origin: 40% 75%;
+	transition-timing-function: ease-in-out;
 }
