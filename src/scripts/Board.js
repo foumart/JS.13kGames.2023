@@ -2,8 +2,8 @@ class Board {
 	
 	constructor(stageData) {
 
-		this.boardWidth = stageData.size;
-		this.boardHeight = stageData.size;
+		this.boardWidth = stageData.size + 2;
+		this.boardHeight = stageData.size + 2;
 		this.map = stageData.map.split('');
 		this.path = stageData.path.split('');
 		this.data = stageData.data.split('');
@@ -31,12 +31,12 @@ class Board {
 		this.pathData = [];
 
 		let x, y;
-		for (y = 0; y < this.boardHeight; y++) {
+		for (y = 0; y < this.boardHeight - 2; y++) {
 			this.mapData.push([]);
 			this.unitsData.push([]);
 			this.pathData.push([]);
-			for (x = 0; x < this.boardWidth; x++) {
-				this.mapData[y].push(10);
+			for (x = 0; x < this.boardWidth - 2; x++) {
+				this.mapData[y].push(2);
 				this.unitsData[y].push(0);
 				this.pathData[y].push(-1);
 			}
@@ -46,15 +46,59 @@ class Board {
 		this.extractHex(this.path, this.pathData);
 		this.extractData(this.data, this.unitsData);
 
+		this.mapData.push([]);
+		this.unitsData.push([]);
+		this.pathData.push([]);
+		this.mapData.unshift([]);
+		this.unitsData.unshift([]);
+		this.pathData.unshift([]);
+
+		for (y = 0; y < this.boardHeight; y++) {
+			if (!y || y == this.boardHeight - 1) {
+				for (x = 0; x < this.boardWidth; x++) {
+					this.mapData[y].push(2);
+					this.unitsData[y].push(0);
+					this.pathData[y].push(-1);
+				}
+			} else {
+				this.mapData[y].push(2); this.mapData[y].unshift(2);
+				this.unitsData[y].push(0); this.unitsData[y].unshift(0);
+				this.pathData[y].push(-1); this.pathData[y].unshift(-1);
+			}
+		}
+
+		for (y = 0; y < this.boardHeight; y++) {
+			for (x = 0; x < this.boardWidth; x++) {
+				if (this.mapData[y][x] == 2) {
+					// TODO
+
+					/*if (y < this.boardHeight-1 && this.mapData[y + 1][x] < 2) {
+						if (x && this.mapData[y + 1][x - 1] < 2) this.mapData[y][x] = 12;
+						else if (x && this.mapData[y + 1][x - 1] == 2) this.mapData[y][x] = 11;
+						else if (x < this.boardWidth-1 && this.mapData[y + 1][x + 1] < 2) this.mapData[y][x] = 15;
+						else if (x < this.boardWidth-1 && this.mapData[y + 1][x + 1] == 2) this.mapData[y][x] = 8;
+						else this.mapData[y][x] = 4;
+					} else if (x < this.boardWidth-1 && this.mapData[y][x + 1] < 2) {
+						if (y && this.mapData[y - 1][x + 1] < 2) this.mapData[y][x] = 12;
+						else if (x && this.mapData[y + 1][x - 1] == 2) this.mapData[y][x] = 11;
+						else if (x < this.boardWidth-1 && this.mapData[y + 1][x + 1] < 2) this.mapData[y][x] = 15;
+						else if (x < this.boardWidth-1 && this.mapData[y + 1][x + 1] == 2) this.mapData[y][x] = 8;
+						else this.mapData[y][x] = 7;
+
+					}*/
+				}
+			}
+		}
+
 		this.createPlayer(stageData.x, stageData.y);
 
-		if (state) {
+		//if (state) {
 			console.log(this.mapData);
 			console.log(this.unitsData);
 			console.log(this.pathData);
 
 			this.createButtons();
-		}
+		//}
 
 		this.pattern = MapTile.buffer();
 
@@ -68,17 +112,17 @@ class Board {
 	extractData(map, data) {
 		map.forEach((element, index) => {
 			const tileData = Board.pairs[parseInt(element, 16)];
-			const y = (index * 2) / this.boardHeight | 0;
-			const x = index * 2 % this.boardHeight;
+			const y = (index * 2) / (this.boardHeight - 2) | 0;
+			const x = index * 2 % (this.boardHeight - 2);
 			data[y][x] = tileData[0];
-			if (x < this.boardWidth - 1) data[y][x + 1] = tileData[1];
-			else if (y < this.boardHeight - 1) data[y + 1][0] = tileData[1];
+			if (x < this.boardWidth - 3) data[y][x + 1] = tileData[1];
+			else if (y < this.boardHeight - 3) data[y + 1][0] = tileData[1];
 		});
 	}
 
 	extractHex(map, data) {
 		map.forEach((element, index) => {
-			if (element != ' ') data[index / this.boardHeight | 0][index % this.boardHeight] = parseInt(element, 16);
+			if (element != ' ') data[index / (this.boardHeight - 2) | 0][index % (this.boardHeight - 2)] = parseInt(element, 16);
 		});
 	}
 
@@ -86,9 +130,9 @@ class Board {
 		this.buttons = [];
 		this.buttonsArr = [];
 		let x, y, arr, button;
-		for(y = 0; y < this.boardHeight; y++) {
+		for(y = 0; y < this.boardHeight - 2; y++) {
 			arr = [];
-			for(x = 0; x < this.boardWidth; x++) {
+			for(x = 0; x < this.boardWidth - 2; x++) {
 				button = new Button(x, y);
 				button.btn.addEventListener("mouseover", this.buttonOver.bind(this));
 				button.btn.addEventListener("mouseout", this.buttonOut.bind(this));
@@ -187,8 +231,4 @@ class Board {
 		Board.instance = null;
 
 	}
-
-	/*updateStageData(stageData) {
-		
-	}*/
 }

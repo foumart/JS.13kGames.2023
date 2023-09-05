@@ -33,7 +33,7 @@ class Unit extends Tile {
 				this.offsetX = 0.07;
 				this.offsetY = -1;
 				if (!state && (x > 9 || y > 4)) this.frame = 1;
-				if (!state && (x < 3 && y > 4)) this.frame = 2;
+				if (!state && (x < 3 && y > 4)) this.frame = 3;
 				break;
 			case 6: // player
 				this.H = 20;
@@ -71,7 +71,7 @@ class Unit extends Tile {
 	draw() {
 		this.context.drawImage(
 			this.type == 7
-				? PixelArt.spritesObjects[4]
+				? PixelArt.spritesObjects[3]
 				: this.type < 4
 					? PixelArt.spritesObjects[this.type - 1]
 					: this.type == 5

@@ -70,7 +70,7 @@ function createUI() {
 
 		if (uiDiv.children[2]) {
 			uiDiv.children[2].innerHTML += " Play";
-			uiDiv.children[2].addEventListener(eventName, this.switchState.bind(this));
+			uiDiv.children[2].addEventListener(eventName, switchState.bind(this));
 		}
 		
 		/*if (uiDiv.children[3]) {
@@ -161,11 +161,11 @@ function resize(e) {
 	}
 
 	// TODO: UI
-	uiDiv.children[0].style = `float:right;transform:scale(${this.getScale(width, height)});transform-origin: top right;`;
-	uiDiv.children[1].style = `float:left;transform:scale(${this.getScale(width, height)});transform-origin: top left;`;
+	uiDiv.children[0].style = `float:right;transform:scale(${getScale(width, height)});transform-origin: top right;`;
+	uiDiv.children[1].style = `float:left;transform:scale(${getScale(width, height)});transform-origin: top left;`;
 
 	if (uiDiv.children[2]) {
-		uiDiv.children[2].style = `top:75%;margin:auto;position:absolute;font-size:${72*this.getScale(width, height)}px;right:20%`;
+		uiDiv.children[2].style = `top:75%;margin:auto;position:absolute;font-size:${72*getScale(width, height)}px;right:20%`;
 	}
 	
 	/*if (uiDiv.children[3]) {

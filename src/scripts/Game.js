@@ -31,7 +31,7 @@ class Game {
 	}
 
 	initStage() {
-		const stageData = StageData.getStageData(this.stage);
+		const stageData = this.getStageData(this.stage);
 		this.stageName = stageData.name;
 		this.board = new Board(stageData);
 	}
@@ -49,5 +49,35 @@ class Game {
 		Game.instance = null;
 		this.board.destroy();
 		this.board = null;
+	}
+
+	getStageData(id) {
+		const obj = [
+			{
+				name: "Easter Island",
+				size: 14, x: 7, y: 8,
+				map: "aaaaaaaaaaaaaaa85aaaaa001aaaa0005aaa4000128030030900000290000aa90005aa0015aaa0caaaaa00aaaaa82",
+				data: "0000000000000002f000009030000660f000fd1074024800d302061831000003200f00903f0007200000b90000024",
+				path: "",//"                  eac",
+			},
+			{
+				name: "Stage 1",
+				size: 5, x: 2, y: 0,
+				map: "9580033c000c",
+				data: "00007c424ec2c",
+				path: ""//"     26d",
+			},
+			{
+				name: "Stage 2",
+				size: 5, x: 3, y: 0,
+				map: "00033c000c",
+				data: "007c424ec2c",
+				path: "   26d",
+			}
+		];
+
+		obj[id].id = id;
+
+		return obj[id];
 	}
 }

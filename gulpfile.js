@@ -112,7 +112,7 @@ function app(callback) {
 	src(scripts, { allowEmpty: true })
 		.pipe(replace('let _debug;', `let _debug = ${debug ? 'true' : 'false'};`, replaceOptions))
 		.pipe(replace('service_worker', 'sw', replaceOptions))
-		.pipe(gulpif(!pwa, replace('// loader', 'window.addEventListener("load", _init);', replaceOptions)))
+		.pipe(gulpif(!pwa, replace('// loader', 'window.addEventListener("load", init);', replaceOptions)))
 		.pipe(gulpif(!debug,
 			closureCompiler({
 				compilation_level: 'ADVANCED_OPTIMIZATIONS',
