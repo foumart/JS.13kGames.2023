@@ -12,6 +12,7 @@ div, canvas {
 	position: absolute;
 	user-select: none;
 	-webkit-tap-highlight-color: transparent;
+	box-sizing: border-box;
 }
 
 canvas {
@@ -51,4 +52,10 @@ canvas {
 	transition: transform 2s;
 	transform-origin: 40% 75%;
 	transition-timing-function: ease-in-out;
+}
+
+.title {
+	background-color:#306bff;
+	border:solid 6px;
+	border-color:#59f #048 #036 #f6b;
 }

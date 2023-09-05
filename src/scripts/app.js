@@ -3,6 +3,7 @@ const mainDiv = document.getElementById("mainDiv");
 const uiDiv = document.getElementById("uiDiv");
 const gameCanvas = document.getElementById("gameCanvas");
 const gameContainer = document.getElementById("gameContainer");
+const gameContext = gameCanvas.getContext("2d");
 
 // global vars
 const mobile = isTouchDevice();
@@ -14,7 +15,6 @@ function isTouchDevice() {
 
 let state = 0;
 let paused = false;
-let stage = 0;
 
 // global sizes
 let width;
@@ -23,6 +23,8 @@ let canvasScale;
 
 // emoji icons used on title screen
 const resources = ['30e', '533', '50a', '5FF'];
+let stage = 0;
+const intoSpeed = 100;
 
 let game;
 
@@ -32,11 +34,16 @@ function getEmojiCode(code) {
 	return `&#x1F${resources[code]};`;
 }
 
+// entry point
 function initializeGame() {
 	window.addEventListener("resize", resize, false);
 
 	document.addEventListener("keydown", onKeyDown);
 	document.addEventListener("keyup", onKeyUp);
+
+	gameCanvas.style = "transition: transform 3s";
+
+	PixelArt.init();
 
 	createUI();
 	resize();
@@ -44,7 +51,6 @@ function initializeGame() {
 
 function createUI() {
 	uiDiv.innerHTML = "";
-	gameCanvas.style = "transition: transform 3s";
 
 	if (!state && !stage) {
 		// Generate the zoom-in Earth effect
@@ -83,18 +89,22 @@ function createUI() {
 			setTimeout(() => {
 				gameCanvas.style.transform = "rotate(0)";
 				game = new Game(stage);
-				TweenFX.to(game.board, 200, {scale: 0.9, tilt: 0.9});
-			}, 750);
+				TweenFX.to(game.board, 2*intoSpeed, {scale: 0.9, tilt: 0.8});//200
+			}, 7*intoSpeed);
 
 			setTimeout(() => {
 				uiDiv.children[2].style.display = "block";
 				//uiDiv.children[3].style.display = "block";
-			}, 5000);
+				
+				//TODO: title
+				//this.generateTitle();
+
+			}, 50*intoSpeed);
 			
 			setTimeout(() => {
 				mainDiv.removeChild(earth);
 				document.body.style.backgroundColor = "#0078d7";
-			}, 2000);
+			}, 20*intoSpeed);
 		} else {
 			/*setTimeout(() => {
 				uiDiv.children[2].style.display = "block";
@@ -136,6 +146,8 @@ function resize(e) {
 		if (state) uiDiv.style.height = ((height - width) / 2) + 'px';
 	}
 
+	gameContext.imageSmoothingEnabled = false;
+
 	if (game) game.resize();
 
 	if (width > height) {
@@ -165,53 +177,12 @@ function getScale(h, w){
 	return (h < w ? h : w) / (state ? 1500 : 1000);
 }
 
-const keysHeld = [];
-function onKeyDown(event) {//console.log(event.keyCode)
-	if (state) {
-		if (event.keyCode == 65 && keysHeld.indexOf(65) == -1) {
-			//switchState();
-		} else if (event.keyCode == 80) {// P pause
-			paused = !paused;
-		} else if (event.keyCode == 82) {// R reset
-			resize();
-
-			//reset
-		} else if (event.keyCode == 13) {
-			debugger
-		} else if (event.keyCode == 40) {
-			//down
-			Board.instance.player.y ++;
-		} else if (event.keyCode == 38) {
-			//up
-			//if () {
-			//	return;
-			//}
-			Board.instance.player.y --;
-			
-		} else if (event.keyCode == 37) {
-			//left
-			Board.instance.player.x --;
-		} else if (event.keyCode == 39) {
-			//right
-			Board.instance.player.x ++;
-		}
-	} else if (event.keyCode == 32) {
-		//switchState();
-	}
-}
-
-function onKeyUp(event) {
-	//touchEndHandler();
-}
-
 function switchState() {
 	if (!state) {
+		state = 2;
+		// check Game loop interval on where the state actually changes
+	} else if (state == 2) {
 		state = 1;
-		createUI();
-		startGame();
-		resize();
-	} else {
-
 	}
 }
 
@@ -221,10 +192,8 @@ function toggleSound(event) {
 
 function startGame() {
 	stage ++;
-	game.reloadStage();
-	//state = 2;
-	//if (game) {
-		//game = null;
-	//}
-	//game = new Game(stage);
+	switchState();
+	game = new Game(stage);
+	createUI();
+	resize();
 }

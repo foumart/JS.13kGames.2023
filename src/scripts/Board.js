@@ -15,12 +15,10 @@ class Board {
 		Board.instance = this;
 
 		this.scale = !state ? 0.01 : 0.8;
-		this.tilt = !state ? 0.5 : 0.9;
-		this.tileOffsetX = 0;// general stage tiles horizontal offset
-		this.tileOffsetY = 0.5;// general stage tiles vertical offset
+		this.tilt = !state ? 0.5 : 0.88;
 
 		// used for data compression
-		// TODO: use binary => hex, ex: "A8030600"
+		// TODO: use binary => hex, ex: "A8030600", instead of "9580033c000c"
 		Board.pairs = [
 			[0, 0], [0, 1], [0, 2], [0, 3],
 			[1, 0], [1, 1], [1, 2], [1, 3],
@@ -58,24 +56,7 @@ class Board {
 			this.createButtons();
 		}
 
-		// Create a pattern, offscreen
-		const patternCanvas = document.createElement("canvas");
-		const patternContext = patternCanvas.getContext("2d");
-
-		patternCanvas.width = 40;
-		patternCanvas.height = 30;
-
-		patternContext.fillStyle = "#988";
-		patternContext.fillRect(0, 0, patternCanvas.width/2, patternCanvas.height/2);
-		patternContext.fillStyle = "#776";
-		patternContext.fillRect(patternCanvas.width/2, 0, patternCanvas.width/2, patternCanvas.height/2);
-		patternContext.fillStyle = "#786";
-		patternContext.fillRect(0, patternCanvas.height/2, patternCanvas.width/2, patternCanvas.height/2);
-		patternContext.fillStyle = "#898";
-		patternContext.fillRect(patternCanvas.width/2, patternCanvas.height/2, patternCanvas.width/2, patternCanvas.height/2);
-		
-		const ctx = gameCanvas.getContext("2d");
-		this.pattern = ctx.createPattern(patternCanvas, "repeat");
+		this.pattern = MapTile.buffer();
 
 		this.clear();
 	}
@@ -123,13 +104,15 @@ class Board {
 		this.field = [];
 		this.path = [];
 		this.units = [];
-		let x, y, fieldArr, pathArr, mapType, unitType;
+		let x, y, tile, fieldArr, pathArr, mapType, unitType;
 		for(y = 0; y < this.boardHeight; y++) {
 			fieldArr = [];
 			pathArr = [];
 			for(x = 0; x < this.boardWidth; x++) {
 				mapType = this.mapData[y][x];
-				fieldArr.push(new MapTile(x, y, mapType));
+				tile = new MapTile(x, y, mapType);
+				if (!mapType) tile.frame = Math.random() * 2.9 | 0;
+				fieldArr.push(tile);
 				pathArr.push(new PathTile(x, y, this.pathData[y][x]));
 				if (mapType == 3) {
 					this.units.push(new Obstacle(x, y, 4));
@@ -138,7 +121,7 @@ class Board {
 				unitType = this.unitsData[y][x];
 				if (unitType > 0) {
 					// on the initial level make sure to place moai instead of rocks
-					// (level compression only records 2 bits of data: empty, palm, tree, rock)
+					// (because level compression only records 2 bits of data: empty, palm, tree, rock)
 					if (mapType == 1 && unitType == 3 && !state) unitType = 5;
 
 					this.units.push(new Unit(x, y, unitType));
@@ -158,11 +141,10 @@ class Board {
 
 	// draw the board grid frames and the unit selection stroke on the canvas
 	draw() {
-		const ctx = gameCanvas.getContext("2d");
-		ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+		gameContext.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
 		if (state) {
-			ctx.fillStyle = "#28f";
-			ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+			gameContext.fillStyle = "#28f";
+			gameContext.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
 		}
 
 		for(let y = 0; y < this.boardHeight; y++) {
@@ -181,18 +163,19 @@ class Board {
 			}
 			this.units[i].resize();
 		}
+
+		// TODO: remove
+		//drawFPS();
 	}
 
 	buttonOver(event) {
 		let unit = this.field[event.target.y][event.target.x];
 		let btn = this.buttons[event.target.y][event.target.x];
-		//btn.hilightEmpty();
 	}
 
 	buttonOut(event){
 		let unit = this.field[event.target.y][event.target.x];
 		let btn = this.buttons[event.target.y][event.target.x];
-		//btn.hilight();
 	}
 
 	clickButton(event){
@@ -202,10 +185,10 @@ class Board {
 
 	destroy() {
 		Board.instance = null;
-		
+
 	}
 
-	updateStageData(stageData) {
+	/*updateStageData(stageData) {
 		
-	}
+	}*/
 }

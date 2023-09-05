@@ -8,9 +8,9 @@ class StageData {
 		const obj = [
 			{
 				name: "Easter Island",
-				size: 14, x: 6, y: 6,
-				map: "a85aaaaa001aaaa0005aaa400012803003c900000290000aa90005aa0015aaa0caaaaa00aaaaa82",
-				data: "02f000009030000660f000fd1074024802d302061831000003200f00903f0007200000b90000024",
+				size: 14, x: 6, y: 7,
+				map: "aaaaaaaaaaaaaaa85aaaaa001aaaa0005aaa4000128030030900000290000aa90005aa0015aaa0caaaaa00aaaaa82",
+				data: "0000000000000002f000009030000660f000fd1074024800d302061831000003200f00903f0007200000b90000024",
 				path: "",//"                  eac",
 			},
 			{
@@ -18,7 +18,7 @@ class StageData {
 				size: 5, x: 2, y: 0,
 				map: "9580033c000c",
 				data: "00007c424ec2c",
-				path: "     26d",
+				path: ""//"     26d",
 			},
 			{
 				name: "Stage 2",
