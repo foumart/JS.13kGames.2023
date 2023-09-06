@@ -17,7 +17,7 @@ class Board {
 		this.scale = !state ? 0.01 : 0.8;
 		this.tilt = !state ? 0.5 : 0.88;
 
-		// used for data compression
+		// used for map data compression
 		// TODO: use binary => hex, ex: "A8030600", instead of "9580033c000c"
 		Board.pairs = [
 			[0, 0], [0, 1], [0, 2], [0, 3],
@@ -46,6 +46,7 @@ class Board {
 		this.extractHex(this.path, this.pathData);
 		this.extractData(this.data, this.unitsData);
 
+		// we add additional tile on each side of the map in order to have space for coasts
 		this.mapData.push([]);
 		this.unitsData.push([]);
 		this.pathData.push([]);
@@ -67,25 +68,54 @@ class Board {
 			}
 		}
 
+		// Walk through all water tiles to convert into coastal edges
 		for (y = 0; y < this.boardHeight; y++) {
 			for (x = 0; x < this.boardWidth; x++) {
 				if (this.mapData[y][x] == 2) {
-					// TODO
+					let checked;
+					if (y < this.boardHeight-1 && this.mapData[y + 1][x] < 2) {
+						if (this.mapData[y][x] < 4) {
+							this.mapData[y][x] = 4;	
 
-					/*if (y < this.boardHeight-1 && this.mapData[y + 1][x] < 2) {
-						if (x && this.mapData[y + 1][x - 1] < 2) this.mapData[y][x] = 12;
-						else if (x && this.mapData[y + 1][x - 1] == 2) this.mapData[y][x] = 11;
-						else if (x < this.boardWidth-1 && this.mapData[y + 1][x + 1] < 2) this.mapData[y][x] = 15;
-						else if (x < this.boardWidth-1 && this.mapData[y + 1][x + 1] == 2) this.mapData[y][x] = 8;
-						else this.mapData[y][x] = 4;
+							if (x < this.boardWidth-1 && y < this.boardHeight-1 && this.mapData[y + 1][x + 1] == 2) {
+								this.mapData[y][x + 1] = 8;
+							}
+							if (x && y < this.boardHeight-1 && this.mapData[y + 1][x - 1] == 2) {
+								this.mapData[y][x - 1] = 11;
+							}
+						}
+
+						if (x && this.mapData[y][x - 1] < 2) {
+							this.mapData[y][x] = 12;
+						}
+
+						if (x < this.boardWidth-1 && this.mapData[y][x + 1] < 2) {
+							this.mapData[y][x] = 15;
+						}
+					} else if (y && this.mapData[y - 1][x] < 2) {
+						if (this.mapData[y][x] < 4) {
+							this.mapData[y][x] = 6;
+							
+							if (x < this.boardWidth-1 && y && this.mapData[y - 1][x + 1] > 1) {
+								this.mapData[y][x + 1] = 9;
+							}
+							if (x && y && this.mapData[y - 1][x - 1] > 1) {
+								this.mapData[y][x - 1] = 10;
+							}
+						}
+
+						if (x && this.mapData[y][x - 1] < 2) {
+							this.mapData[y][x] = 13;
+						}
+
+						if (x < this.boardWidth-1 && this.mapData[y][x + 1] < 2) {
+							this.mapData[y][x] = 14;
+						}
 					} else if (x < this.boardWidth-1 && this.mapData[y][x + 1] < 2) {
-						if (y && this.mapData[y - 1][x + 1] < 2) this.mapData[y][x] = 12;
-						else if (x && this.mapData[y + 1][x - 1] == 2) this.mapData[y][x] = 11;
-						else if (x < this.boardWidth-1 && this.mapData[y + 1][x + 1] < 2) this.mapData[y][x] = 15;
-						else if (x < this.boardWidth-1 && this.mapData[y + 1][x + 1] == 2) this.mapData[y][x] = 8;
-						else this.mapData[y][x] = 7;
-
-					}*/
+						this.mapData[y][x] = 7;
+					} else if (x && this.mapData[y][x - 1] < 2) {
+						this.mapData[y][x] = 5;
+					}
 				}
 			}
 		}
@@ -187,7 +217,7 @@ class Board {
 	draw() {
 		gameContext.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
 		if (state) {
-			gameContext.fillStyle = "#28f";
+			gameContext.fillStyle = "#0078d7";
 			gameContext.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
 		}
 

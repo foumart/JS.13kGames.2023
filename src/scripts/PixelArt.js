@@ -18,10 +18,10 @@ class PixelArt {
 			"97de595cc149f5cf757cc9ff1e8edcf5cf7597de59"
 		];
 		PixelArt.paletteWater = [
-			"eeee88f5cf7597de59bdddf890c7f657a7eb2e60e0",
-			"eeee88f5cf7597de59bdddf890c7f62e60e057a7eb",
-			"eeee88f5cf7597de59bdddf857a7eb90c7f62e60e0",
-			"eeee88f5cf7597de59bdddf890c7f657a7eb2e60e0"
+			"eeee8897de59bdddf890c7f657a7eb2354d3f1f192",
+			"eeee8897de59bdddf890c7f657a7eb2354d3f1f192",
+			"eeee8897de59bdddf890c7f657a7eb2354d3f1f192",
+			"eeee8897de59bdddf890c7f657a7eb2354d3f1f192"
 		]
 
 		// 16x16 transparent sprites
@@ -44,16 +44,23 @@ class PixelArt {
 			// Grass (uses 4 palettes)
 			"@@c_qCH@@hS[~^SAXeMSsY[BSkC@@P[[NC@@h@XKwHHKeEBqFP@PhYB@HP@@@ZCHP@P[A@@P@XN[[@A@YswKKEB@ZJ^SklYZ[SH@[]sY[C@@@Z~^S@@BAAqKP@A[B@@C" +
 			// Water [~~]
-			"Qcuwvvv@@pv@@@@v@@@@@@@@G@xG@@G@@x@@@@@@@@v@@pvvF@vvvvvvvvuvvvmmvvmvmmmmmmmmmmddmmlmedddddddddLaddaddIIIaIIIIQRKIY" +
+			"@@@mmmm@@hm@@@@m@@@@@@@@vF@pvvF@vvvvvvvv@vvF@@pv@@@@@@@@m@@hmmE@mmmmmmmmlmmmddmmdmdddddddddd[[ddcd\\[[[[[[[[[KY[[_[[IIIYIOIIQIJIQ" +
 			// Water [. ]
-			"Qcuw@@@@@pv@v@@@@@@@@v@@G@@@@F@@@p@@@p@@@@xG@Fv@@@G@FvvF@x@puvv@x@pmvvF@@pmmvv@@Flmuv@GFdlmvFxGpIlmvFxGpKdmuFxGp" +
+			"@@@m@@@@@hm@m@@@@@@@@m@@vF@@@@E@vvvv@@h@@vvvv@h@@@@pvF@Em@@@vF@EmmE@pv@hlmm@pv@hdmmE@v@hddmm@v@Ecdlm@vFE[cdmEpFhOcdmEpFhJ[dlEpFh" +
 			// Water ['-]
-			"Qcuw@xGpalmv@xG@aluv@x@aluv@@aluv@@xadmvF@@@Idmvv@@@Idmuvv@@KdlmuvvvKalmmuvvIadmmmmmJIdlddmmZIadddddQYIdLaddSJIIIIaIKRKQRYIY",
+			"Icdm@pFhIcdm@pF@Jclm@pv@IclE@@vvYclm@@pvY[dm@@@@I[dmE@@@I[dlm@@@I[clmmmmJYcdmmmmIY[dleddII[cddddQIY[c\\[[IQI[[[[[IIIIYKYIJIJIIQIQ",
 			256
 		);
 
 		PixelArt.spritesTiles = PixelArt.drawSprites([PixelArt.dataTiles.shift()], PixelArt.paletteTiles);
-		PixelArt.spritesWater = PixelArt.drawSprites(PixelArt.dataTiles, PixelArt.paletteWater);
+
+		// 16x16, 4 arrays with 0,90,180,270 degrees rotated sprites => 12 sprites total inside: 3 sprites * 4 animated frames each.
+		PixelArt.spritesWater = [
+			PixelArt.drawSprites(PixelArt.dataTiles, PixelArt.paletteWater),
+			PixelArt.drawSprites(PixelArt.dataTiles, PixelArt.paletteWater, 16, 16, false, 1),
+			PixelArt.drawSprites(PixelArt.dataTiles, PixelArt.paletteWater, 16, 16, false, 2),
+			PixelArt.drawSprites(PixelArt.dataTiles, PixelArt.paletteWater, 16, 16, false, 3)
+		];
 
 		// 14x20 transparent sprites
 		PixelArt.dataMoai = PixelArt.extract(
@@ -66,7 +73,7 @@ class PixelArt {
 
 		PixelArt.spritesMoai = PixelArt.drawSprites(PixelArt.dataMoai, PixelArt.paletteMoai, 20, 14);
 		PixelArt.spritesMoai = PixelArt.spritesMoai.concat(PixelArt.drawSprites(PixelArt.dataMoai, PixelArt.paletteMoai, 20, 14, true));
-		
+
 		// 16x18 transparent sprites
 		PixelArt.dataCharacter = PixelArt.extract(
 			// Character frames
@@ -82,29 +89,29 @@ class PixelArt {
 		PixelArt.spritesCharacter = PixelArt.drawSprites(PixelArt.dataCharacter, PixelArt.paletteCharacter, 18);
 	}
 
-	static drawSprites(data, palette, height = 16, width = 16, flipped = false) {
+	static drawSprites(data, palette, height = 16, width = 16, flipped = false, rotated = 0) {
 		const sprites = [];
 		data.forEach((spriteData, id) => {
 			if (Array.isArray(palette)) {
 				if (data.length < palette.length) {
 					// draw tiles that have same data but multiple palettes (grass, water)
 					palette.forEach((colors) => {
-						sprites.push(PixelArt.drawSprite(spriteData, width, height, colors, 0, flipped));
+						sprites.push(PixelArt.drawSprite(spriteData, width, height, colors, 0, flipped, rotated));
 					});
 				} else {
 					// draw objects
-					sprites.push(PixelArt.drawSprite(spriteData, width, height, palette[id], id > 2 ? 0 : (id + 1) * 0.25, flipped));
+					sprites.push(PixelArt.drawSprite(spriteData, width, height, palette[id], id > 2 ? 0 : (id + 1) * 0.25, flipped, rotated));
 				}
 			} else {
 				// draw elements that have the same palette (character, moai)
-				sprites.push(PixelArt.drawSprite(spriteData, width, height, palette, 1, flipped));
+				sprites.push(PixelArt.drawSprite(spriteData, width, height, palette, 1, flipped, rotated));
 			}
 		});
 
 		return sprites;
 	}
 
-	static drawSprite(spriteData, width, height, palette, addShadow = 0, flipped = false) {
+	static drawSprite(spriteData, width, height, palette, addShadow = 0, flipped = false, rotated = 0) {
 		const spriteCanvas = document.createElement("canvas");
 		spriteCanvas.width = width;
 		spriteCanvas.height = height + (addShadow ? 1 : 0);// additional pixel in height to add contour via drop-shadow
@@ -112,6 +119,11 @@ class PixelArt {
 		ctx.imageSmoothingEnabled = false;
 		if (addShadow) PixelArt.addShadow(ctx, 1, 0, addShadow);
 
+		ctx.save();
+		if (rotated == 1) ctx.translate(width, 0);
+		else if (rotated == 2) ctx.translate(width, height);
+		else if (rotated == 3) ctx.translate(0, height);
+		ctx.rotate((Math.PI/2) * rotated);
 		for(let y = 0; y < height; y ++) {
 			for(let z,x = flipped ? width-1 : 0; flipped ? x > 0 : x < width; flipped ? x -- : x ++) {
 				z = (flipped ? width - x : x);
@@ -121,6 +133,7 @@ class PixelArt {
 				}
 			}
 		}
+		ctx.restore();
 
 		return spriteCanvas;
 	}

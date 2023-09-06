@@ -45,7 +45,7 @@ class Tile extends GameElement {
 				? PixelArt.spritesTiles[this.frame]
 				: this.type == 1
 					? PixelArt.spritesAhu[0]
-					: PixelArt.spritesWater[this.frame]
+					: PixelArt.spritesWater[this.type % 4][(this.type / 4 | 0) * 3 + this.frame]
 			,
 			this.getX(),
 			this.getY(),
@@ -56,7 +56,7 @@ class Tile extends GameElement {
 	}
 
 	getColor() {
-		return "#"+["ee8", "ee8", !state ? "0078d7" : "28f", "ee8", !state ? "0078d7" : "28f"][this.type];
+		return this.type < 2 || this.type == 3 ? "#ee8" : "#0078d7";
 	}
 
 }
