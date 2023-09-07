@@ -12,8 +12,8 @@ class Button extends Tile {
 		div.y = y;
 		div.style.width = this.width + "px";
 		div.style.height = this.height + "px";
-		div.style.left = this.getX() + "px";
-		div.style.top = this.getY() + "px";
+		div.style.left = (this.getX() + 2) + "px";
+		div.style.top = (this.getY() + 2) + "px";
 		div.style.cursor = "pointer";
 		div.className = "unselectable";
 		return div;
@@ -25,8 +25,8 @@ class Button extends Tile {
 	}
 
 	draw() {
-		this.btn.style.left = this.getX() + "px";
-		this.btn.style.top = this.getY() + "px";
+		this.btn.style.left = (this.getX() + 2) + "px";
+		this.btn.style.top = (this.getY() + 2) + "px";
 		this.btn.style.width = this.width + "px";
 		this.btn.style.height = this.height + "px";
 	}

@@ -21,7 +21,7 @@ class Game {
 		this.loop = setInterval(() => {
 			if (state <= 1) {
 				this.step ++;
-				this.board.draw();
+				if (!earth) this.board.draw();
 			} else {
 				clearInterval(this.loop);
 				this.destroy();
@@ -56,14 +56,14 @@ class Game {
 			{
 				name: "Easter Island",
 				size: 14, x: 7, y: 8,
-				map: "aaaaaaaaaaaaaaa85aaaaa001aaaa0005aaa4000128030030900000290000aa90005aa0015aaa0caaaaa00aaaaa82",
+				map: "fffffffffffffffc5fffff001ffff0005fff400013c020020d000003d0000ffd0005ff0015fff08fffff00fffffc3",
 				data: "0000000000000002f000009030000660f000fd1074024800d302061831000003200f00903f0007200000b90000024",
 				path: "",//"                  eac",
 			},
 			{
 				name: "Stage 1",
-				size: 5, x: 2, y: 0,
-				map: "9580033c000c",
+				size: 5, x: 2, y: 2,
+				map: "d5c0022800083",
 				data: "00007c424ec2c",
 				path: ""//"     26d",
 			},

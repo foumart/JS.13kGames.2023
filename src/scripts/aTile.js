@@ -10,17 +10,18 @@ class Tile extends GameElement {
 
 	getOffsetX() {
 		let offset = 0;
-		if (this.scale != 1) {
+		/*if (this.scale != 1) {
 			offset = (this.canvas.width - this.canvas.width * this.scale) / 2;
-		}
+		}*/
 		return offset;
 	}
 	
 	getOffsetY() {
 		let offset = 0;
-		if (this.scale != 1) {
-			offset = (this.canvas.height - this.canvas.height * this.scale) / 2;
-		}
+		/*if (this.scale != 1) {
+			offset = (this.canvas.height - this.canvas.height * this.scale);
+		}*/
+		offset = this.canvas.height / 15
 		return offset;
 	}
 
@@ -56,7 +57,7 @@ class Tile extends GameElement {
 	}
 
 	getColor() {
-		return this.type < 2 || this.type == 3 ? "#ee8" : "#0078d7";
+		return this.type < 3 ? "#ee8" : "#0078d7";
 	}
 
 }

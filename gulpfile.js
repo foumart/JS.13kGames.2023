@@ -152,11 +152,11 @@ function pack(callback) {
 	const variableNames = [];
 	if (!debug) {
 		// fix ontouchstart event bug
-		let occurance = js.indexOf('ontouchstart');
-		ontouchstartName = js.substr(occurance + 13, js.charAt(occurance + 15) == ',' || js.charAt(occurance + 15) == ':' ? 2 : 1);
+		//let occurance = js.indexOf('ontouchstart');
+		//ontouchstartName = js.substr(occurance + 13, js.charAt(occurance + 15) == ',' || js.charAt(occurance + 15) == ':' ? 2 : 1);
 
-		occurance = js.indexOf('ontouchend');
-		ontouchendName = js.substr(occurance + 11, js.charAt(occurance + 13) == ',' || js.charAt(occurance + 13) == ')' ? 2 : 1);
+		//occurance = js.indexOf('ontouchend');
+		//ontouchendName = js.substr(occurance + 11, js.charAt(occurance + 13) == ',' || js.charAt(occurance + 13) == ')' ? 2 : 1);
 
 		// remove getElementById calls that are required by the compiler. The Id named html elements are directly available in js as globals.
 		/*const segmentedJs = js.split('=document.getElementById("');
@@ -202,8 +202,8 @@ function pack(callback) {
 		.pipe(replace('"', '', replaceOptions))
 		.pipe(replace('rep_css', '<style>' + css + '</style>', replaceOptions))
 		.pipe(replace('rep_js', '<script>' + js + '</script>', replaceOptions))
-		.pipe(gulpif(!debug, replace(' ontouchstart', ` ontouchstart=${ontouchstartName}()`, replaceOptions)))
-		.pipe(gulpif(!debug, replace(' ontouchend', ` ontouchend=${ontouchendName}()`, replaceOptions)))
+		//.pipe(gulpif(!debug, replace(' ontouchstart', ` ontouchstart=${ontouchstartName}()`, replaceOptions)))
+		//.pipe(gulpif(!debug, replace(' ontouchend', ` ontouchend=${ontouchendName}()`, replaceOptions)))
 		.pipe(concat('index.html'))
 		.pipe(dest(dir + '/'))
 		.on('end', callback);

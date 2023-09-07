@@ -19,11 +19,11 @@ canvas {
 	pointer-events: none;
 }
 
-#gameCanvas {
+/* #gameCanvas {
 	image-rendering: pixelated;
-}
+} */
 
-#uiDiv {
+#uiDiv, #inDiv, #gameContainer {
 	font-size: 64px;
 }
 
@@ -44,14 +44,11 @@ canvas {
 
 .earth {
 	font-size: 64px;
-	left: 45%;
-	top: 45%;
-}
-
-.animate {
-	transition: transform 2s;
+	left: 50%;
+	top: 50%;
+	margin-top: -42px;
+	margin-left: -42px;
 	transform-origin: 40% 75%;
-	transition-timing-function: ease-in-out;
 }
 
 .title {

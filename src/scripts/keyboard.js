@@ -13,20 +13,16 @@ function onKeyDown(event) {//console.log(event.keyCode)
 			debugger;
 		} else if (event.keyCode == 40) {
 			//down
-			Board.instance.player.y ++;
+			moveDown();
 		} else if (event.keyCode == 38) {
 			//up
-			//if () {
-			//	return;
-			//}
-			Board.instance.player.y --;
-			
+			moveUp();
 		} else if (event.keyCode == 37) {
 			//left
-			Board.instance.player.x --;
+			moveLeft();
 		} else if (event.keyCode == 39) {
 			//right
-			Board.instance.player.x ++;
+			moveRight();
 		}
 	//} else if (event.keyCode == 32) {
 		//switchState();
@@ -35,4 +31,20 @@ function onKeyDown(event) {//console.log(event.keyCode)
 
 function onKeyUp(event) {
 	//touchEndHandler();
+}
+
+function moveUp() {
+	Board.instance.player.y --;
+}
+
+function moveDown() {
+	Board.instance.player.y ++;
+}
+
+function moveLeft() {
+	Board.instance.player.x --;
+}
+
+function moveRight() {
+	Board.instance.player.x ++;
 }

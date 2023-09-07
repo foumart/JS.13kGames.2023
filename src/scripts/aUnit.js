@@ -32,8 +32,8 @@ class Unit extends Tile {
 				this.W = 14;
 				this.offsetX = 0.07;
 				this.offsetY = -1;
-				if (!state && (x > 9 || y > 4)) this.frame = 1;
-				if (!state && (x < 3 && y > 4)) this.frame = 3;
+				if (!state && (x > 10 || y > 6)) this.frame = 1;
+				if (!state && (x < 3 && y > 6)) this.frame = 3;
 				break;
 			case 6: // player
 				this.H = 20;

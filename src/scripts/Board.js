@@ -14,16 +14,28 @@ class Board {
 
 		Board.instance = this;
 
-		this.scale = !state ? 0.01 : 0.8;
-		this.tilt = !state ? 0.5 : 0.88;
+		this.scale = !state ? 1 : 1;
+		this.tilt = !state ? 0.8 : 0.88;
 
 		// used for map data compression
 		// TODO: use binary => hex, ex: "A8030600", instead of "9580033c000c"
 		Board.pairs = [
-			[0, 0], [0, 1], [0, 2], [0, 3],
-			[1, 0], [1, 1], [1, 2], [1, 3],
-			[2, 0], [2, 1], [2, 2], [2, 3],
-			[3, 0], [3, 1], [3, 2], [3, 3]
+			[0, 0],// 0
+			[0, 1],// 1
+			[0, 2],// 2
+			[0, 3],// 3
+			[1, 0],// 4
+			[1, 1],// 5
+			[1, 2],// 6
+			[1, 3],// 7
+			[2, 0],// 8
+			[2, 1],// 9
+			[2, 2],// 10 A
+			[2, 3],// 11 B
+			[3, 0],// 12 C
+			[3, 1],// 13 D
+			[3, 2],// 14 E
+			[3, 3]//  15 F
 		];
 
 		this.mapData = [];
@@ -36,7 +48,7 @@ class Board {
 			this.unitsData.push([]);
 			this.pathData.push([]);
 			for (x = 0; x < this.boardWidth - 2; x++) {
-				this.mapData[y].push(2);
+				this.mapData[y].push(3);
 				this.unitsData[y].push(0);
 				this.pathData[y].push(-1);
 			}
@@ -57,63 +69,63 @@ class Board {
 		for (y = 0; y < this.boardHeight; y++) {
 			if (!y || y == this.boardHeight - 1) {
 				for (x = 0; x < this.boardWidth; x++) {
-					this.mapData[y].push(2);
+					this.mapData[y].push(3);
 					this.unitsData[y].push(0);
 					this.pathData[y].push(-1);
 				}
 			} else {
-				this.mapData[y].push(2); this.mapData[y].unshift(2);
-				this.unitsData[y].push(0); this.unitsData[y].unshift(0);
-				this.pathData[y].push(-1); this.pathData[y].unshift(-1);
+				this.mapData[y].push(3);
+				this.unitsData[y].push(0);
+				this.pathData[y].push(-1);
+				this.mapData[y].unshift(3);
+				this.unitsData[y].unshift(0);
+				this.pathData[y].unshift(-1);
 			}
 		}
 
 		// Walk through all water tiles to convert into coastal edges
 		for (y = 0; y < this.boardHeight; y++) {
 			for (x = 0; x < this.boardWidth; x++) {
-				if (this.mapData[y][x] == 2) {
-					let checked;
-					if (y < this.boardHeight-1 && this.mapData[y + 1][x] < 2) {
+				if (this.mapData[y][x] == 3) {
+					if (y < this.boardHeight-1 && this.mapData[y + 1][x] < 3) {
 						if (this.mapData[y][x] < 4) {
-							this.mapData[y][x] = 4;	
-
-							if (x < this.boardWidth-1 && y < this.boardHeight-1 && this.mapData[y + 1][x + 1] == 2) {
+							this.mapData[y][x] = 4;
+							if (x < this.boardWidth-1 && y < this.boardHeight-1 && this.mapData[y + 1][x + 1] == 3) {
 								this.mapData[y][x + 1] = 8;
 							}
-							if (x && y < this.boardHeight-1 && this.mapData[y + 1][x - 1] == 2) {
+							if (x && y < this.boardHeight-1 && this.mapData[y + 1][x - 1] == 3) {
 								this.mapData[y][x - 1] = 11;
 							}
 						}
 
-						if (x && this.mapData[y][x - 1] < 2) {
+						if (x && this.mapData[y][x - 1] < 3) {
 							this.mapData[y][x] = 12;
 						}
 
-						if (x < this.boardWidth-1 && this.mapData[y][x + 1] < 2) {
+						if (x < this.boardWidth-1 && this.mapData[y][x + 1] < 3) {
 							this.mapData[y][x] = 15;
 						}
-					} else if (y && this.mapData[y - 1][x] < 2) {
+					} else if (y && this.mapData[y - 1][x] < 3) {
 						if (this.mapData[y][x] < 4) {
 							this.mapData[y][x] = 6;
-							
-							if (x < this.boardWidth-1 && y && this.mapData[y - 1][x + 1] > 1) {
+							if (x < this.boardWidth-1 && y && this.mapData[y - 1][x + 1] > 2) {
 								this.mapData[y][x + 1] = 9;
 							}
-							if (x && y && this.mapData[y - 1][x - 1] > 1) {
+							if (x && y && this.mapData[y - 1][x - 1] > 2) {
 								this.mapData[y][x - 1] = 10;
 							}
 						}
 
-						if (x && this.mapData[y][x - 1] < 2) {
+						if (x && this.mapData[y][x - 1] < 3) {
 							this.mapData[y][x] = 13;
 						}
 
-						if (x < this.boardWidth-1 && this.mapData[y][x + 1] < 2) {
+						if (x < this.boardWidth-1 && this.mapData[y][x + 1] < 3) {
 							this.mapData[y][x] = 14;
 						}
-					} else if (x < this.boardWidth-1 && this.mapData[y][x + 1] < 2) {
+					} else if (x < this.boardWidth-1 && this.mapData[y][x + 1] < 3) {
 						this.mapData[y][x] = 7;
-					} else if (x && this.mapData[y][x - 1] < 2) {
+					} else if (x && this.mapData[y][x - 1] < 3) {
 						this.mapData[y][x] = 5;
 					}
 				}
@@ -122,13 +134,13 @@ class Board {
 
 		this.createPlayer(stageData.x, stageData.y);
 
-		//if (state) {
+		/*if (state) {
 			console.log(this.mapData);
 			console.log(this.unitsData);
 			console.log(this.pathData);
 
 			this.createButtons();
-		//}
+		}*/
 
 		this.pattern = MapTile.buffer();
 
@@ -188,7 +200,7 @@ class Board {
 				if (!mapType) tile.frame = Math.random() * 2.9 | 0;
 				fieldArr.push(tile);
 				pathArr.push(new PathTile(x, y, this.pathData[y][x]));
-				if (mapType == 3) {
+				if (mapType == 2) {
 					this.units.push(new Obstacle(x, y, 4));
 				}
 

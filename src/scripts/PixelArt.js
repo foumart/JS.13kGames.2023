@@ -44,11 +44,11 @@ class PixelArt {
 			// Grass (uses 4 palettes)
 			"@@c_qCH@@hS[~^SAXeMSsY[BSkC@@P[[NC@@h@XKwHHKeEBqFP@PhYB@HP@@@ZCHP@P[A@@P@XN[[@A@YswKKEB@ZJ^SklYZ[SH@[]sY[C@@@Z~^S@@BAAqKP@A[B@@C" +
 			// Water [~~]
-			"@@@mmmm@@hm@@@@m@@@@@@@@vF@pvvF@vvvvvvvv@vvF@@pv@@@@@@@@m@@hmmE@mmmmmmmmlmmmddmmdmdddddddddd[[ddcd\\[[[[[[[[[KY[[_[[IIIYIOIIQIJIQ" +
+			"hm@mmmm@@hm@@@@m@@@@@@@@vF@pvvF@vvvvvvvv@vvF@@pv@@@@@@@@m@@hmmE@mmmmmmmmlmmmddmmdmdddddddddd[[ddcd\\[[[[[[[[[KY[[[[[IIIY[OIIQIJII" +
 			// Water [. ]
-			"@@@m@@@@@hm@m@@@@@@@@m@@vF@@@@E@vvvv@@h@@vvvv@h@@@@pvF@Em@@@vF@EmmE@pv@hlmm@pv@hdmmE@v@hddmm@v@Ecdlm@vFE[cdmEpFhOcdmEpFhJ[dlEpFh" +
+			"hm@m@@@@@hm@m@@@@@@@@m@@vF@@@@E@vvvv@@h@@vvvv@h@@@@pvF@Em@@@vF@EmmE@pv@hmmm@pv@hdmmE@v@hddmm@v@Ecdlm@vFE[cdmEpFh[cdmEpFh[[dmEpFh" +
 			// Water ['-]
-			"Icdm@pFhIcdm@pF@Jclm@pv@IclE@@vvYclm@@pvY[dm@@@@I[dmE@@@I[dlm@@@I[clmmmmJYcdmmmmIY[dleddII[cddddQIY[c\\[[IQI[[[[[IIIIYKYIJIJIIQIQ",
+			"I[dmEpFhI[dmEpF@J[lm@pv@Iclm@@vvYclm@@pvY[dmE@@@I[dmE@@@I[dlm@@mI[clmmmmJYcdmmmmIY[ddmedII[cddddQIY[c\\[[IQI[[[[[IIIIYKIYJIJIIIJI",
 			256
 		);
 

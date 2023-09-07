@@ -1,6 +1,7 @@
 // TODO: remove this - all elements with IDs are global objects in js
 const mainDiv = document.getElementById("mainDiv");
 const uiDiv = document.getElementById("uiDiv");
+const inDiv = document.getElementById("inDiv");
 const gameCanvas = document.getElementById("gameCanvas");
 const gameContainer = document.getElementById("gameContainer");
 const gameContext = gameCanvas.getContext("2d");
@@ -21,18 +22,14 @@ let width;
 let height;
 let canvasScale;
 
-// emoji icons used on title screen
-const resources = ['30e', '533', '50a', '5FF'];
 let stage = 0;
-const intoSpeed = 100;
+
+const intoSpeed = 99;
+let tween = {earth: 0, board: 0, half: 0};
 
 let game;
-
 let earth;
-
-function getEmojiCode(code) {
-	return `&#x1F${resources[code]};`;
-}
+let controls, upButton, leftButton, rightButton, downButton, centerButton;
 
 // entry point
 function initializeGame() {
@@ -40,8 +37,6 @@ function initializeGame() {
 
 	document.addEventListener("keydown", onKeyDown);
 	document.addEventListener("keyup", onKeyUp);
-
-	gameCanvas.style = "transition: transform 3s";
 
 	PixelArt.init();
 
@@ -51,77 +46,84 @@ function initializeGame() {
 
 function createUI() {
 	uiDiv.innerHTML = "";
+	inDiv.innerHTML = "";
+	gameContainer.innerHTML = "";
 
 	if (!state && !stage) {
 		// Generate the zoom-in Earth effect
 		earth = document.createElement('div');
-		earth.innerHTML = getEmojiCode(0);
-		earth.className = "earth animate";
+		earth.innerHTML = '&#x1F30E';//getEmojiCode(0);
+		earth.className = "earth";
 		mainDiv.insertBefore(earth, gameCanvas);
 	}
 
-	generateUIButton(uiDiv, 1, toggleFullscreen);
-	generateUIButton(uiDiv, 2, toggleSound);
+	generateUIButton(uiDiv, '&#x1F50A', toggleSound);
+	generateUIButton(uiDiv, '&#x1F533', toggleFullscreen);
 
 	if (!state) {
 		// Generate Main Menu
-		generateUIButton(uiDiv, 3, switchState, "button");
-		//generateUIButton(uiDiv, 3, switchState, "button");
+		generateUIButton(gameContainer, '&#x1F5FF', switchState, "button");
+		//generateUIButton(uiDiv, 4, showCredits, "button");
 
-		if (uiDiv.children[2]) {
-			uiDiv.children[2].innerHTML += " Play";
-			uiDiv.children[2].addEventListener(eventName, switchState.bind(this));
-		}
-		
-		/*if (uiDiv.children[3]) {
-			uiDiv.children[3].innerHTML += " Settings";
-			uiDiv.children[3].addEventListener(eventName, this.switchState.bind(this));
-		}*/
+		setTimeout(() => {
+			gameContainer.firstChild.innerHTML += " Play";
+			gameContainer.firstChild.style.display = "none";
+		}, 1);
 
 		if (!stage) {
-			setTimeout(() => {
-				earth.style.transform = "scale(90,90)";
-				gameCanvas.style.transform = "rotate(-90deg)";
-				uiDiv.children[2].style.display = "none";
-				//uiDiv.children[3].style.display = "none";
-			}, 1);
-	
-			setTimeout(() => {
-				gameCanvas.style.transform = "rotate(0)";
-				game = new Game(stage);
-				TweenFX.to(game.board, 2*intoSpeed, {scale: 0.9, tilt: 0.8});//200
-			}, 7*intoSpeed);
+			gameCanvas.style.transform = "rotate(-45deg) scale(0.01)";
 
-			setTimeout(() => {
-				uiDiv.children[2].style.display = "block";
-				//uiDiv.children[3].style.display = "block";
-				
-				//TODO: title
-				//this.generateTitle();
+			TweenFX.to(tween, intoSpeed, {earth: 99}, 0, () => {
+				earth.style.transform = `scale(${tween.earth})`;
 
-			}, 50*intoSpeed);
-			
-			setTimeout(() => {
+				if (tween.earth > 25 && !tween.half) {
+					tween.half = 1;
+					game = new Game(stage);
+					TweenFX.to(tween, intoSpeed, {board: 1}, 0, () => {
+						gameCanvas.style.transform = `rotate(${-45 * (1-tween.board)}deg) scale(${tween.board})`;
+					}, () => {
+						gameContainer.firstChild.style.display = "block";
+						//TODO: title
+						this.generateTitle();
+					});
+				}
+
+				if (tween.board > 0.7) {
+					document.body.style.backgroundColor = "#0078d7";
+					//earth.style.opacity = 1 - (tween.board-0.8) * 5;
+				}
+			}, () => {
 				mainDiv.removeChild(earth);
-				document.body.style.backgroundColor = "#0078d7";
-			}, 20*intoSpeed);
-		} else {
-			/*setTimeout(() => {
-				uiDiv.children[2].style.display = "block";
-			}, 1);*/
+				earth = 0;
+			});
 		}
 	} else {
 		// Generate In-Game UI
+		controls = document.createElement('div');
+		controls.style = "max-width:260px;bottom:0;transform-origin:bottom left";
+		inDiv.appendChild(controls);
+		upButton = generateUIButton(controls, '&#x25B2', moveUp);//^
+		leftButton = generateUIButton(controls, '&#x25C0', moveLeft);//<
+		rightButton = generateUIButton(controls, '&#x25B6', moveRight);//>
+		downButton = generateUIButton(controls, '&#x25BC', moveDown);//v
+
+		upButton.style.margin = "auto";
+		//leftButton.style.float = "left";
+		//rightButton.style.float = "right";
+		leftButton.style = "float:left;margin:unset;margin-left:20px;";
+		rightButton.style = "float:right;margin:unset;width:99px";
+		downButton.style.margin = "auto";
 	}
 }
 
 function generateUIButton(div, code, handler, className = "button icon") {
 	const button = document.createElement('div');
-	button.addEventListener(mobile ? "touchstart" : "mousedown", handler.bind(this));
-	button.innerHTML = getEmojiCode(code);
+	button.addEventListener(eventName, handler.bind(this));
+	button.innerHTML = code;//getEmojiCode(code);
 	button.className = className;
 	button.id = "button_" + code;
 	div.appendChild(button);
+	return button;
 }
 
 function resize(e) {
@@ -129,43 +131,75 @@ function resize(e) {
 	height = window.innerHeight;
 
 	// set html positionings
-	uiDiv.style.width = mainDiv.style.width = width + 'px';
-	uiDiv.style.height = mainDiv.style.height = height + 'px';
+	mainDiv.style.width = width + 'px';
+	mainDiv.style.height = height + 'px';
 
 	if (width > height) {
+		// landscape
 		gameCanvas.width = height;
 		gameCanvas.height = height;
 		gameContainer.style.width = height + "px";
 		gameContainer.style.height = height + "px";
-		if (state) uiDiv.style.width = ((width - height) / 2) + 'px';
+
+		inDiv.style.minHeight = 'unset';
+		inDiv.style.minWidth = (150 + width/10) + 'px';
+		inDiv.style.width = ((width - height) / 2) + 'px';
+		inDiv.style.height = height + 'px';
+
+		if (controls && ((width - height) / 2) > 260) {
+			controls.style.transform = `scale(${((width - height) / 2) / 260})`;
+		}
+
+		uiDiv.style.minHeight = 'unset';
+		uiDiv.style.minWidth = '200px';
+		uiDiv.style.width = ((width - height) / 2) + 'px';
+		uiDiv.style.height = height + 'px';
+		uiDiv.style.right = 0;
 	} else {
+		// portrait
 		gameCanvas.width = width;
 		gameCanvas.height = width;
 		gameContainer.style.width = width + "px";
 		gameContainer.style.height = width + "px";
-		if (state) uiDiv.style.height = ((height - width) / 2) + 'px';
+
+		uiDiv.style.minWidth = 'unset';
+		uiDiv.style.minHeight = '100px';
+		uiDiv.style.height = ((height - width) / 2) + 'px';
+		uiDiv.style.width = width + 'px';
+
+		inDiv.style.minWidth = 'unset';
+		inDiv.style.minHeight = '260px';
+		inDiv.style.height = ((height - width) / 2) + 'px';
+		inDiv.style.width = width + 'px';
+		if (state) inDiv.style.bottom = 0;
 	}
 
 	gameContext.imageSmoothingEnabled = false;
 
 	if (game) game.resize();
 
+	// centering the game canvas but on more squared screens it will be pushed to the right/top side
+	// in order to provide space for touch screen controls on the left/bottom.
 	if (width > height) {
 		gameCanvas.style.left = gameContainer.style.left = "50%";
-		gameCanvas.style.top = gameCanvas.style.marginTop = 0; gameContainer.style.top = gameContainer.style.marginTop = 0;
-		gameCanvas.style.marginLeft = gameContainer.style.marginLeft = `-${height / 2}px`;
+		gameCanvas.style.top = gameCanvas.style.marginTop = 0;
+		gameContainer.style.top = gameContainer.style.marginTop = 0;
+		gameCanvas.style.marginLeft = gameContainer.style.marginLeft =
+			`-${!state ? height / 2 : width - height < height / 6 ? width / 2 - (width-height) : height / 2.4}px`;
 	} else {
 		gameCanvas.style.top = gameContainer.style.top = "50%";
-		gameCanvas.style.left = gameCanvas.style.marginLeft = 0; gameContainer.style.left = gameContainer.style.marginLeft = 0;
-		gameCanvas.style.marginTop = gameContainer.style.marginTop = `-${width / 2}px`;
+		gameCanvas.style.left = gameCanvas.style.marginLeft = 0;
+		gameContainer.style.left = gameContainer.style.marginLeft = 0;
+		gameCanvas.style.marginTop = gameContainer.style.marginTop =
+			`-${!state ? width / 2 : height - width < width / 6 ? height / 2 : width / 1.7}px`;
 	}
 
 	// TODO: UI
-	uiDiv.children[0].style = `float:right;transform:scale(${getScale(width, height)});transform-origin: top right;`;
-	uiDiv.children[1].style = `float:left;transform:scale(${getScale(width, height)});transform-origin: top left;`;
+	uiDiv.children[0].style = `float:left;transform:scale(${getScale(width, height)});transform-origin: top left;`;
+	uiDiv.children[1].style = `float:right;transform:scale(${getScale(width, height)});transform-origin: top right;`;
 
-	if (uiDiv.children[2]) {
-		uiDiv.children[2].style = `top:75%;margin:auto;position:absolute;font-size:${72*getScale(width, height)}px;right:20%`;
+	if (gameContainer.firstChild) {
+		gameContainer.firstChild.style = `top:75%;margin:auto;position:absolute;font-size:${72*getScale(width, height)}px;right:20%`;
 	}
 	
 	/*if (uiDiv.children[3]) {
@@ -174,7 +208,7 @@ function resize(e) {
 }
 
 function getScale(h, w){
-	return (h < w ? h : w) / (state ? 1500 : 1000);
+	return (h < w ? h : w) / 1000;
 }
 
 function switchState() {
