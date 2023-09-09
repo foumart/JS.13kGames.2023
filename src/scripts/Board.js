@@ -134,13 +134,9 @@ class Board {
 
 		this.createPlayer(stageData.x, stageData.y);
 
-		/*if (state) {
-			console.log(this.mapData);
-			console.log(this.unitsData);
-			console.log(this.pathData);
-
+		if (state) {
 			this.createButtons();
-		}*/
+		}
 
 		this.pattern = MapTile.buffer();
 
@@ -149,6 +145,10 @@ class Board {
 
 	createPlayer(x, y) {
 		this.player = new Player(x, y);
+	}
+
+	isPassable(x, y) {
+		return !this.mapData[y][x] && this.unitsData[y][x] < 3;
 	}
 
 	extractData(map, data) {

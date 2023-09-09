@@ -5,10 +5,6 @@ class Game {
 		this.stage = stage || stage;
 		this.turn = 0;
 		this.step = 0;
-		//this.randoms = [];
-		/*for (let i = 0; i < 99; i ++) {
-			this.randoms.push(Math.random());
-		}*/
 		Game.instance = this;
 		
 		this.initialized = true;
@@ -20,12 +16,14 @@ class Game {
 		this.board.draw();
 		this.loop = setInterval(() => {
 			if (state <= 1) {
+				// gameplay
 				this.step ++;
 				if (!earth) this.board.draw();
 			} else {
+				// switch state - will be loading new level
 				clearInterval(this.loop);
 				this.destroy();
-				startGame();
+				startGame(state > 2);
 			}
 		}, 1000 / 60);
 	}
@@ -41,10 +39,6 @@ class Game {
 		this.board.draw();
 	}
 
-	/*random() {
-		return this.randoms[this.step % 96];
-	}*/
-
 	destroy() {
 		Game.instance = null;
 		this.board.destroy();
@@ -59,6 +53,27 @@ class Game {
 				map: "fffffffffffffffc5fffff001ffff0005fff400013c020020d000003d0000ffd0005ff0015fff08fffff00fffffc3",
 				data: "0000000000000002f000009030000660f000fd1074024800d302061831000003200f00903f0007200000b90000024",
 				path: "",//"                  eac",
+			},
+			{
+				name: "Stage 1",
+				size: 5, x: 2, y: 2,
+				map: "f7f0300000c0",
+				data: "00000010400c",
+				path: ""//"     26d",
+			},
+			{
+				name: "Stage 1",
+				size: 5, x: 2, y: 2,
+				map: "f7f0308000c0",
+				data: "00020010500d",
+				path: ""//"     26d",
+			},
+			{
+				name: "Stage 1",
+				size: 5, x: 2, y: 2,
+				map: "c4f0308000c0",
+				data: "00020010500d",
+				path: ""//"     26d",
 			},
 			{
 				name: "Stage 1",
