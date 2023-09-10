@@ -14,8 +14,8 @@ function isTouchDevice() {
 	return ("ontouchstart" in window && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent));
 }
 
-let state = 0;
-let stage = 1;// 0 - title screen, > 1 - directly load any level
+let state = 0;// changes when starting a level
+let stage = 0;// 0 - title screen, > 1 - directly load any level
 
 // global sizes
 let width;
@@ -26,8 +26,10 @@ let portrait;
 let tween = { earth: 1, board: 0 };
 let uiState;
 
+// global objects
 let game;
 let board;
+// ui stuff
 let earth;
 let controls, upButton, leftButton, rightButton, downButton, centerButton, actionButton;
 let title, playButton, fullscreenButton, soundButton;
@@ -84,7 +86,7 @@ function createUI() {
 
 				if (tween.earth > 25 && !uiState) {
 					uiState = 1;
-					// generate game board and zoom it in
+					// Generate game board and zoom it in
 					game = new Game(stage);
 					TweenFX.to(tween, intoSpeed, {board: 1}, 0, () => {
 						gameCanvas.style.transform = `rotate(${-45 * (1-tween.board)}deg) scale(${tween.board})`;
@@ -93,13 +95,13 @@ function createUI() {
 						// Show Play button
 						playButton.innerHTML += " Play";
 						playButton.className = "button";
-						// generate the Moai Alley title logo
+						// Generate the Moai Alley title logo
 						generateScaledTitle();
 					});
 				}
 
-				// we change background color to blue when the earth planet has been zoomed-in enough
-				// and remove the planet at the same time
+				// Changing background color to blue when the Earth planet has been zoomed-in enough,
+				// also removing the planet at the same time.
 				if (earth && tween.board > 0.7) {
 					document.body.style.backgroundColor = "#0078d7";
 					mainDiv.removeChild(earth);
@@ -108,7 +110,7 @@ function createUI() {
 			});
 		}
 	} else {
-		game = new Game(stage);// had to add this here when directly loading a level
+		game = new Game(stage);// had to add this here to avoid an error when directly loading a level
 		// Generate In-Game UI
 		controls = document.createElement('div');
 		controls.style = "bottom:0;transform-origin:bottom left";
@@ -123,10 +125,7 @@ function createUI() {
 		upButton.style = downButton.style = "margin:0;width:100%";
 
 		actionButton = generateUIButton(inDiv, '', board.doAction.bind(board));
-	}
 
-	// Load a level directly on load
-	if (stage) {
 		document.body.style.backgroundColor = "#0078d7";
 		game = new Game(stage);
 		switchState(0, 3);
@@ -151,16 +150,16 @@ function generateScaledTitle() {
 	}
 }
 
-function resize(e) {//console.log("resize");
+function resize(e) {
 	width = window.innerWidth;
 	height = window.innerHeight;
 
-	// set html positionings
+	// Set HTML positionings
 	mainDiv.style.width = width + 'px';
 	mainDiv.style.height = height + 'px';
 
 	if (width > height) {
-		// landscape
+		// Landscape
 		portrait = false;
 		gameCanvas.width = height;
 		gameCanvas.height = height;
@@ -180,7 +179,7 @@ function resize(e) {//console.log("resize");
 		uiDiv.style.height = height/(2-state) + 'px';
 		uiDiv.style.right = 0;
 	} else {
-		// portrait
+		// Portrait
 		portrait = true;
 		gameCanvas.width = width;
 		gameCanvas.height = width;
@@ -188,8 +187,8 @@ function resize(e) {//console.log("resize");
 		gameContainer.style.height = width + "px";
 
 		inDiv.style.minWidth = 'unset';
-		inDiv.style.minHeight = (99 + height/6) + 'px';//'260px';
-		inDiv.style.height = (state ? (height - width) / 2 : height / 2) + 'px';//((height - width) / 2)
+		inDiv.style.minHeight = (99 + height/6) + 'px';
+		inDiv.style.height = (state ? (height - width) / 2 : height / 2) + 'px';
 		inDiv.style.width = width + 'px';
 
 		if (state) inDiv.style.bottom = 0;
@@ -228,8 +227,8 @@ function resize(e) {//console.log("resize");
 
 	if (game) game.resize();
 
-	// centering the game canvas but on more squared screens it is pushed to the right/top side
-	// in order to provide space for touch screen controls on the left/bottom.
+	// Centering the game canvas. On more squared screens it is pushed to the right/top side
+	// in order to provide space for touch screen controls on the left/bottom, or the logo on the title screen.
 	if (portrait) {
 		gameCanvas.style.top = gameContainer.style.top = "50%";
 		gameCanvas.style.left = gameCanvas.style.marginLeft = 0;

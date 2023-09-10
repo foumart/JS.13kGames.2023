@@ -1,7 +1,7 @@
 class PixelArt {
 
 	static init() {
-
+		// Colors
 		PixelArt.paletteObjects = [
 			// Palm
 			"2dcb0053ff000083007e321a622411b04321d3702e",
@@ -14,14 +14,14 @@ class PixelArt {
 		];
 		PixelArt.paletteMoai = "cdaf98a88e7986715f6b56455444364736292d211a";
 		PixelArt.paletteCharacter = "fffdc1ff4e24fe9773cb7151864016642600401800";
-		PixelArt.paletteAhu = "d0b7a5b39c8a947f6f7d6a5c5f4e424c3f35b69c88";
+		PixelArt.paletteRoad = "e2c5afdbb293c8a284ad8d70937b6772573e4c3417";
 		PixelArt.paletteTiles = [
-			"97de595cc149ffcc7d97de59ffcc7dffcc7dffcc7d",
-			"97de595cc149ffcc7d97de5997de5997de5997de59",
-			"97de595cc149ffcc7d97de5997de5997de595cc149",
-			"97de595cc149ffcc7d7cc9ff1e8edcfe751ae4ff00",
-			"97de595cc149ffcc7dffcc7dffcc7dfe751ae4ff00",
-			"97de595cc149ffcc7d7cc9ff1e8edcffcc7d97de59"
+			"97de595cc149ffcc7d97de59ffcc7dffcc7dffcc7d",//norm
+			"97de595cc149ffcc7d97de59ffcc7dffcc7dffcc7d",//norm
+			"97de595cc149ffcc7d97de5997de5997de595cc149",//green
+			"97de595cc149ffcc7d7cc9ff1e8edcfe751ae4ff00",//flowers blue + red
+			"97de595cc149ffcc7dffcc7dffcc7dfe751ae4ff00",//flowers red
+			"97de595cc149ffcc7d7cc9ff1e8edcffcc7d97de59" //flowers blue
 		];
 		PixelArt.paletteWater = [
 			"fee5be97de59bdddf890c7f657a7eb2354d3f1f192",
@@ -29,8 +29,8 @@ class PixelArt {
 			"fee5be97de59bdddf890c7f657a7eb2354d3f1f192",
 			"fee5be97de59bdddf890c7f657a7eb2354d3f1f192"
 		];
-		PixelArt.paletteRoad = "dabeb3c1aa96b79e7ba08e728d7d567160424e4024";
 
+		// Sprites
 		// 16x16 transparent sprites
 		PixelArt.dataObjects = PixelArt.extract(
 			// Palm
@@ -48,12 +48,12 @@ class PixelArt {
 
 		// 16x16
 		PixelArt.dataTiles = PixelArt.extract(
-			// Grass (uses 4 palettes)
+			// Grass (uses 6 palettes)
 			"@@c_qCH@@hS[~^SAXeMSsY[BSkC@@P[[NC@@h@XKwHHKeEBqFP@PhYB@HP@@@ZCHP@P[A@@P@XN[[@A@YswKKEB@ZJ^SklYZ[SH@[]sY[C@@@Z~^S@@BAAqKP@A[B@@C" +
 			// Road [o]
 			"@@@@@@@@@@@@@@@@@@@@@@@@@@pT{E@@@@sr^@@@\`s\\QnC@@X}fIwG@@xvs}ZF@@xMt_G@@xUtSUC@@XouvnG@@@WJ}f@@@@\`LdA@@@@@@@@@@@@@@@@@@@@@@@@@@" +
 			// Road [U]
-			"@@{MaS@@@pIdn@@@\`b[M{D@@@wT{MF@@@sr^@@@ps\\Qn@@@@}fIw@@@@vs}Z@@@@Mt_@@@@PtSE@@@@huvF@@@@@J}@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" +
+			"@@{ms}@@@xKfkcG@@\`gkNtD@@@nTc}F@@@skT^@@@pk\\auG@@\`]b^f@@@@nsez@@@@OTTn@@@@PekD@@@@\`sLF@@@@@bj@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" +
 			// Water [~~]
 			"hm@mmmm@@hm@@@@m@@@@@@@@vF@pvvF@vvvvvvvv@vvF@@pv@@@@@@@@m@@hmmE@mmmmmmmmlmmmddmmdmdddddddddd[[ddcd\\[[[[[[[[[KY[[[[[IIIY[OIIQIJII" +
 			// Water [. ]
@@ -63,7 +63,7 @@ class PixelArt {
 			256
 		);
 
-		// 16x16, 4 grass tiles
+		// 16x16, 6 grass tiles using the same data
 		PixelArt.spritesTiles = PixelArt.drawSprites([PixelArt.dataTiles.shift()], PixelArt.paletteTiles);
 
 		// 16x16, roads
@@ -88,9 +88,9 @@ class PixelArt {
 		// 14x20 transparent sprites
 		PixelArt.dataMoai = PixelArt.extract(
 			// Front
-			"@@Qgc@@@XZ[\\D@@P~@wC@@sGZxf@@~xQGw@@^tQ^t@@VsQVs@@XTItD@@PtxfC@@ZbwTc@@SKZZ[@@\\jvVc@@\`S[[D@@@\\bc@@@wG@x~@x~~uwwGwwu~x~~ncuoFwp]l~~}F@fuwww@" +
+			"@@SQc@@@XZ[\\D@@P~@wC@@sGZxf@@~xQGw@@^tQ^t@@VsQVs@@XTItD@@PtxfC@@ZbwTc@@SKZZ[@@\\jvVc@@\`S[[D@@@\\bc@@@wG@x~@x~~uwwGwwu~x~~ncuoFwp]l~~}F@fuwww@" +
 			// Left
-			"@@XZQs@@@eJJZF@hoS\\lC@x@wcuE@@Qx\\n@@JbGcu@PQ|n\\^A@bfaccC@@LZ\\nD@uWccX@xh\\\\uG@w\\b}n@@\`SDw\\@@@@xecF@@@oZ\\t@@\`UlfeF@lcuuow@e]l~x}hlduEGG@wn~|~@",
+			"@@XSQs@@@eJJZF@hoS\\lC@x@wcuE@@Qx\\n@@JbGcu@PQ|n\\^A@bfaccC@@LZ\\nD@uWccX@xh\\\\uG@w\\b}n@@\`SDw\\@@@@xecF@@@oZ\\t@@\`UlfeF@lcuuow@e]l~x}hlduEGG@wn~|~@",
 			280
 		);
 
@@ -104,11 +104,11 @@ class PixelArt {
 			"@@@@@xJG@@@@@Wy@@@@~~x@@h@xuuuG@UEg\\[l@JBsoDwc@VFLXK\`n@p@\`|\`\\e@h@@c\\k@@\\@@twD@@{cWodgfCp\\PEG\\_\\h@PS}cFcp@PZBl@\\h@pRt|@@p@@Vz_D@h@]h@ek@x@Oz@Wy@" +
 			"@@@@@@Wy@@@@@xJGh@@o~~A@UEpecuG@JB}h|x@@VFDaCa{@x@\`\\c[]@p@pCgc^@\\@hc[l\`@{C@LI}@@pdEgu\`fChXfEG\\_\\p@PS}cFch@VZrl@\\p@pRB|@@h@@V}^D@@@]@@ek@@@O}@oy@"+
 			// Ahu
-			"@uunmnm@h[[][][Eememmeml\\[c[[c[ccd\\dd\\d\\\\g[_|[gce\\ddcd\\lK_{[__{ynOOIOIOtrdnnfdfscmZ]mm^v|\\cecSmnU\\deld_h^innuctvib]YsmENJlfclgtQKIIIIIIYXRQRJRJC",
+			"@cuvvwv@pldfefeFnvnvvnvue\\ldcl\\llmemmemeekcc]dkln]mmkm]uLcccbcSQwJJIJIJ}{]wwokoDlvcfvvgU]lnl\\vp]emnumbwfqww~l}~ikfY|vFOKlolul}YUIIIIIIjh\\ZdScSE",
 			288
 		);
 
-		PixelArt.spritesAhu = PixelArt.drawSprites([PixelArt.dataCharacter.pop()], PixelArt.paletteAhu, 18);
+		PixelArt.spritesAhu = PixelArt.drawSprites([PixelArt.dataCharacter.pop()], PixelArt.paletteRoad, 18);
 		PixelArt.spritesCharacter = PixelArt.drawSprites(PixelArt.dataCharacter, PixelArt.paletteCharacter, 18);
 	}
 
@@ -117,16 +117,16 @@ class PixelArt {
 		data.forEach((spriteData, id) => {
 			if (Array.isArray(palette)) {
 				if (data.length < palette.length) {
-					// draw tiles that have same data but multiple palettes (grass, water)
+					// Draw tiles that have same data but multiple palettes (grass, water)
 					palette.forEach((colors) => {
 						sprites.push(PixelArt.drawSprite(spriteData, width, height, colors, 0, flipped, rotated));
 					});
 				} else {
-					// draw objects
-					sprites.push(PixelArt.drawSprite(spriteData, width, height, palette[id], id > 1 ? 1 : 0.8, flipped, rotated));
+					// Draw objects (trees, mauntain)
+					sprites.push(PixelArt.drawSprite(spriteData, width, height, palette[id],  id == 3 ? 0 : id > 1 ? 1 : 0.8, flipped, rotated));
 				}
 			} else {
-				// draw elements that have the same palette (character, moai)
+				// Draw elements that have the same palette (character, ahu, moai)
 				sprites.push(PixelArt.drawSprite(spriteData, width, height, palette, 1, flipped, rotated));
 			}
 		});
@@ -178,7 +178,7 @@ class PixelArt {
 
 		let i = 0, length = px.length / totalPixels, sprites = [];
 
-		// initialize sprites data
+		// Initialize sprites data
 		for(i = 0; i < length; i++) {
 			sprites.push(px.splice(0, totalPixels));
 		}

@@ -16,16 +16,12 @@ class Unit extends Tile {
 				this.offsetY = -0.55;
 				break;
 			case 2: // tree (level data == 2)
-				//this.offsetX = 2;
 				this.offsetY = -0.4;
 				break;
 			case 3: // rock (level data == 3)
 				this.offsetX = -0.075;
 				this.offsetY = -0.4;
 				this.S = 14;
-				break;
-			case 4: // obstackle lake ? (level map == 3)
-				//this.offsetY = 0.5;
 				break;
 			case 5: // moai
 				this.H = 20;
@@ -41,9 +37,7 @@ class Unit extends Tile {
 				this.animated = true;
 				this.animate();
 				break;
-			default:
-			case 7: // ahu
-				this.offsetY = -0.2;
+			default: // lake (4)
 				break;
 		}
 	}

@@ -21,7 +21,7 @@ class Tile extends GameElement {
 		/*if (this.scale != 1) {
 			offset = (this.canvas.height - this.canvas.height * this.scale);
 		}*/
-		offset = this.canvas.height / 15
+		offset = this.canvas.height / (portrait ? 12 : 15)
 		return offset;
 	}
 
@@ -40,9 +40,12 @@ class Tile extends GameElement {
 		if (this.type < 2 || this.type > 3) {
 			this.context.drawImage(
 				!this.type
+					// Grass
 					? PixelArt.spritesTiles[this.frame]
 					: this.type == 1
+						// Ahu (Pedestal)
 						? PixelArt.spritesAhu[0]
+						// Water
 						: PixelArt.spritesWater[this.type % 4][(this.type / 4 | 0) * 3 + this.frame]
 				,
 				this.getX(),
@@ -54,7 +57,7 @@ class Tile extends GameElement {
 	}
 
 	getColor() {
-		// ground base color / water base color
+		// Ground base color / Water base color
 		return this.type < 3 ? "#ffe0af" : "#0078d7";
 	}
 

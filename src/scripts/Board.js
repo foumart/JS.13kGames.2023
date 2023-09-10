@@ -17,7 +17,7 @@ class Board {
 		this.scale = !state ? 1 : 1;
 		this.tilt = !state ? 0.8 : 0.88;
 
-		// used for map data compression
+		// Used for map data compression
 		// TODO: use binary => hex, ex: "A8030600", instead of "9580033c000c"
 		Board.pairs = [
 			[0, 0],// 0
@@ -58,7 +58,7 @@ class Board {
 		this.extractHex(this.path, this.pathData);
 		this.extractData(this.data, this.unitsData);
 
-		// we add additional tile on each side of the map in order to have space for coasts
+		// Adding tiles on each side of the map in order to have space for coasts
 		this.mapData.push([]);
 		this.unitsData.push([]);
 		this.pathData.push([]);
@@ -136,8 +136,6 @@ class Board {
 
 		//if (state) this.createButtons();
 
-		//this.pattern = MapTile.buffer();// TODO: remove pattern attempts
-
 		// Generate field - add MapTiles, PathTiles and Units
 		this.field = [];
 		this.path = [];
@@ -158,7 +156,7 @@ class Board {
 
 				unitType = this.unitsData[y][x];
 				if (unitType > 0) {
-					// on the initial level make sure to place moai instead of rocks
+					// On the initial level make sure to place Moai instead of rocks
 					// (because level compression only records 2 bits of data: empty, palm, tree, rock)
 					if (mapType == 1 && unitType == 3) unitType = 5;
 
@@ -279,13 +277,14 @@ class Board {
 		}*/
 	}
 
-	// draw the board grid frames and the unit selection stroke on the canvas
+	// Draw the board
 	draw() {
-		gameContext.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+		// TODO: Check if necessarry
+		/*gameContext.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
 		if (state) {
 			gameContext.fillStyle = "#0078d7";
 			gameContext.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
-		}
+		}*/
 
 		for(let y = 0; y < this.boardHeight; y++) {
 			for(let x = 0; x < this.boardWidth; x++) {
@@ -295,7 +294,7 @@ class Board {
 			}
 		}
 
-		// draw units from top to bottom inserting the player in the proper depth
+		// Draw units from top to bottom inserting the player in the proper depth position
 		let drawn;
 		for (let i = 0; i < this.units.length; i ++) {
 			if (!drawn && this.player.y < this.units[i].y) {
@@ -330,6 +329,5 @@ class Board {
 
 	destroy() {
 		Board.instance = null;
-
 	}
 }
