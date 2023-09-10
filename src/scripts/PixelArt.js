@@ -3,26 +3,33 @@ class PixelArt {
 	static init() {
 
 		PixelArt.paletteObjects = [
+			// Palm
 			"2dcb0053ff000083007e321a622411b04321d3702e",
+			// Tree
 			"067c000ebb0046e40059ff00d041147e321a622411",
-			"f7e064b4897c5f4e482b8a0e1e68078d4029622411",
+			// Rock
+			"f7e064b4897c5f4e482b8a0e1e68078f4832622411",
+			// Lake
 			"89b3ff427eeb1e61db1448a60b378532bd17077707"
 		];
 		PixelArt.paletteMoai = "cdaf98a88e7986715f6b56455444364736292d211a";
 		PixelArt.paletteCharacter = "fffdc1ff4e24fe9773cb7151864016642600401800";
 		PixelArt.paletteAhu = "d0b7a5b39c8a947f6f7d6a5c5f4e424c3f35b69c88";
 		PixelArt.paletteTiles = [
-			"97de595cc149f5cf7597de59f5cf75f5cf75f5cf75",
-			"97de595cc149f5cf757cc9ff1e8edcfe751ae4ff00",
-			"97de595cc149f5cf75f5cf75f5cf75fe751ae4ff00",
-			"97de595cc149f5cf757cc9ff1e8edcf5cf7597de59"
+			"97de595cc149ffcc7d97de59ffcc7dffcc7dffcc7d",
+			"97de595cc149ffcc7d97de5997de5997de5997de59",
+			"97de595cc149ffcc7d97de5997de5997de595cc149",
+			"97de595cc149ffcc7d7cc9ff1e8edcfe751ae4ff00",
+			"97de595cc149ffcc7dffcc7dffcc7dfe751ae4ff00",
+			"97de595cc149ffcc7d7cc9ff1e8edcffcc7d97de59"
 		];
 		PixelArt.paletteWater = [
-			"eeee8897de59bdddf890c7f657a7eb2354d3f1f192",
-			"eeee8897de59bdddf890c7f657a7eb2354d3f1f192",
-			"eeee8897de59bdddf890c7f657a7eb2354d3f1f192",
-			"eeee8897de59bdddf890c7f657a7eb2354d3f1f192"
-		]
+			"fee5be97de59bdddf890c7f657a7eb2354d3f1f192",
+			"fee5be97de59bdddf890c7f657a7eb2354d3f1f192",
+			"fee5be97de59bdddf890c7f657a7eb2354d3f1f192",
+			"fee5be97de59bdddf890c7f657a7eb2354d3f1f192"
+		];
+		PixelArt.paletteRoad = "dabeb3c1aa96b79e7ba08e728d7d567160424e4024";
 
 		// 16x16 transparent sprites
 		PixelArt.dataObjects = PixelArt.extract(
@@ -31,7 +38,7 @@ class PixelArt {
 			// Tree
 			"@@@QA@@@@@PdJ@R@@RP\\SP\\BPdBZAPdSP\\BHAa[J@ZAppMSA@Hnb~@@@Q@P\\BPB@bTP\\zbT@b[OJqb[BaSEyFbSAHRAwGQSA@I@nFHI@@@@uG@@@@@@~F@@@@@puw@@@" +
 			// Rock
-			"@@@@RZB@@@@PY~S@@@@JQG_B@@PIZ^XB@@NQry{C@@KRN_GG@xQRQz{C@tYJRJZG\`Or_RQCChKRCNZx@xNrxSRwc}QZwR{PoSRCWZ\\JzS{c{}S|\\po_G_}x}Gx{G" +
+			"@@@@jlD@@@@PI\`\`@@@@JQGED@@pIZ~h@@@NQrqGE@@ORNV^@@xQRQrCE@tYJRJZ@\`Or_RQ{DhKRCNZFGxNrxSRwc}QZwR{PoSRCWZ\\JzS{c{}S|\\po_G_}x}Gx{G" +
 			// Lake
 			"@@@wGp@@pGxeewGFxll[JllGfQ[SIZ[}W[SJZ[Kj\\SR[[KQ[cbcccZ[STll\\\\\\SjeeeeeebkmlllllllmmmeeeemommmmmmEpmmmmmmFpxmmmmwGx@vGw@@@G@x@x@",
 			256
@@ -43,6 +50,10 @@ class PixelArt {
 		PixelArt.dataTiles = PixelArt.extract(
 			// Grass (uses 4 palettes)
 			"@@c_qCH@@hS[~^SAXeMSsY[BSkC@@P[[NC@@h@XKwHHKeEBqFP@PhYB@HP@@@ZCHP@P[A@@P@XN[[@A@YswKKEB@ZJ^SklYZ[SH@[]sY[C@@@Z~^S@@BAAqKP@A[B@@C" +
+			// Road [o]
+			"@@@@@@@@@@@@@@@@@@@@@@@@@@pT{E@@@@sr^@@@\`s\\QnC@@X}fIwG@@xvs}ZF@@xMt_G@@xUtSUC@@XouvnG@@@WJ}f@@@@\`LdA@@@@@@@@@@@@@@@@@@@@@@@@@@" +
+			// Road [U]
+			"@@{MaS@@@pIdn@@@\`b[M{D@@@wT{MF@@@sr^@@@ps\\Qn@@@@}fIw@@@@vs}Z@@@@Mt_@@@@PtSE@@@@huvF@@@@@J}@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" +
 			// Water [~~]
 			"hm@mmmm@@hm@@@@m@@@@@@@@vF@pvvF@vvvvvvvv@vvF@@pv@@@@@@@@m@@hmmE@mmmmmmmmlmmmddmmdmdddddddddd[[ddcd\\[[[[[[[[[KY[[[[[IIIY[OIIQIJII" +
 			// Water [. ]
@@ -52,7 +63,19 @@ class PixelArt {
 			256
 		);
 
+		// 16x16, 4 grass tiles
 		PixelArt.spritesTiles = PixelArt.drawSprites([PixelArt.dataTiles.shift()], PixelArt.paletteTiles);
+
+		// 16x16, roads
+		let road1 = PixelArt.dataTiles.shift();
+		let road2 = PixelArt.dataTiles.shift();
+		PixelArt.spritesRoad = [//drawSprite(spriteData, width, height, palette, addShadow = 0, flipped = false, rotated = 0) {
+			PixelArt.drawSprite(road1, 16, 16, PixelArt.paletteRoad),
+			PixelArt.drawSprite(road2, 16, 16, PixelArt.paletteRoad),
+			PixelArt.drawSprite(road2, 16, 16, PixelArt.paletteRoad, 0, 0, 1),
+			PixelArt.drawSprite(road2, 16, 16, PixelArt.paletteRoad, 0, 0, 2),
+			PixelArt.drawSprite(road2, 16, 16, PixelArt.paletteRoad, 0, 0, 3),
+		];
 
 		// 16x16, 4 arrays with 0,90,180,270 degrees rotated sprites => 12 sprites total inside: 3 sprites * 4 animated frames each.
 		PixelArt.spritesWater = [
@@ -100,7 +123,7 @@ class PixelArt {
 					});
 				} else {
 					// draw objects
-					sprites.push(PixelArt.drawSprite(spriteData, width, height, palette[id], id > 2 ? 0 : (id + 1) * 0.25, flipped, rotated));
+					sprites.push(PixelArt.drawSprite(spriteData, width, height, palette[id], id > 1 ? 1 : 0.8, flipped, rotated));
 				}
 			} else {
 				// draw elements that have the same palette (character, moai)

@@ -15,7 +15,7 @@ function isTouchDevice() {
 }
 
 let state = 0;
-let stage = 0;// 0 - title screen, > 1 - directly load any level
+let stage = 1;// 0 - title screen, > 1 - directly load any level
 
 // global sizes
 let width;
@@ -27,9 +27,12 @@ let tween = { earth: 1, board: 0 };
 let uiState;
 
 let game;
+let board;
 let earth;
-let controls, upButton, leftButton, rightButton, downButton, centerButton;
-let title;
+let controls, upButton, leftButton, rightButton, downButton, centerButton, actionButton;
+let title, playButton, fullscreenButton, soundButton;
+
+// onclick="console.log(this.innerHTML.codePointAt(0)+' : '+this.innerHTML.codePointAt(0).toString(16))"
 
 // entry point
 function initializeGame() {
@@ -63,20 +66,15 @@ function createUI() {
 	}
 
 	// Fullscreen and Sound buttons
-	generateUIButton(uiDiv, '&#x1F533', toggleFullscreen);
-	generateUIButton(uiDiv, '&#x1F50A', toggleSound);
+	fullscreenButton = generateUIButton(uiDiv, '&#x1F533', toggleFullscreen);
+	soundButton = generateUIButton(uiDiv, '&#x1F50A', toggleSound);
 
 	// Generate Main Menu
 	if (!state && !stage) {
 		// Play Button
-		generateUIButton(gameContainer, '&#x1F5FF', switchState, "button");
+		playButton = generateUIButton(gameContainer, '&#x1F5FF', switchState, "button hidden");
 		// Settings / Credits ?
 		//generateUIButton(uiDiv, 4, showCredits, "button");
-
-		setTimeout(() => {
-			gameContainer.firstChild.innerHTML += " Play";
-			gameContainer.firstChild.style.display = "none";
-		}, 1);
 
 		if (!stage) {
 			// Earth zoom-in transition
@@ -93,8 +91,9 @@ function createUI() {
 					}, () => {
 						uiState = 2;
 						// Show Play button
-						gameContainer.firstChild.style.display = "block";
-						// generate the Moai Alley title
+						playButton.innerHTML += " Play";
+						playButton.className = "button";
+						// generate the Moai Alley title logo
 						generateScaledTitle();
 					});
 				}
@@ -109,19 +108,21 @@ function createUI() {
 			});
 		}
 	} else {
+		game = new Game(stage);// had to add this here when directly loading a level
 		// Generate In-Game UI
 		controls = document.createElement('div');
 		controls.style = "bottom:0;transform-origin:bottom left";
 		inDiv.appendChild(controls);
-		upButton = generateUIButton(controls, '&#x25B2', moveUp);//^
-		leftButton = generateUIButton(controls, '&#x25C0', moveLeft);//<
-		rightButton = generateUIButton(controls, '&#x25B6', moveRight);//>
-		downButton = generateUIButton(controls, '&#x25BC', moveDown);//v
+		upButton = generateUIButton(controls, '&#x25B2', board.moveUp.bind(board));//^
+		leftButton = generateUIButton(controls, '&#x25C0', board.moveLeft.bind(board));//<
+		rightButton = generateUIButton(controls, '&#x25B6', board.moveRight.bind(board));//>
+		downButton = generateUIButton(controls, '&#x25BC', board.moveDown.bind(board));//v
 
-		//upButton.style.margin = "auto";
 		leftButton.style = "float:left;margin:0";
 		rightButton.style = "float:right;margin:0;width:80px";
 		upButton.style = downButton.style = "margin:0;width:100%";
+
+		actionButton = generateUIButton(inDiv, '', board.doAction.bind(board));
 	}
 
 	// Load a level directly on load
@@ -150,7 +151,7 @@ function generateScaledTitle() {
 	}
 }
 
-function resize(e) {console.log("resize");
+function resize(e) {//console.log("resize");
 	width = window.innerWidth;
 	height = window.innerHeight;
 
@@ -171,20 +172,13 @@ function resize(e) {console.log("resize");
 		inDiv.style.width = ((width - height) / 2) + 'px';
 		inDiv.style.height = height + 'px';///2
 
-		if (controls) {
-			controls.style.width = "100%";
-			//upButton.style.top = leftButton.style.top = rightButton.style.top = 0;
-		}
+		if (controls) controls.style.width = "100%";
 
 		uiDiv.style.minHeight = 'unset';
 		uiDiv.style.minWidth = '200px';
 		uiDiv.style.width = ((width - height) / 2) + 'px';
-		uiDiv.style.height = height/2 + 'px';
+		uiDiv.style.height = height/(2-state) + 'px';
 		uiDiv.style.right = 0;
-
-		/*if (upButton) {
-			upButton.style.top = leftButton.style.top = rightButton.style.top = 0;
-		}*/
 	} else {
 		// portrait
 		portrait = true;
@@ -194,17 +188,16 @@ function resize(e) {console.log("resize");
 		gameContainer.style.height = width + "px";
 
 		inDiv.style.minWidth = 'unset';
-		inDiv.style.minHeight = (99 + height/7) + 'px';//'260px';
-		inDiv.style.height = height / 2 + 'px';//((height - width) / 2)
+		inDiv.style.minHeight = (99 + height/6) + 'px';//'260px';
+		inDiv.style.height = (state ? (height - width) / 2 : height / 2) + 'px';//((height - width) / 2)
 		inDiv.style.width = width + 'px';
+
 		if (state) inDiv.style.bottom = 0;
 
-		if (controls) {
-			controls.style.width = "auto";
-		}
+		if (controls) controls.style.width = "auto";
 
 		uiDiv.style.minWidth = 'unset';
-		uiDiv.style.minHeight = '100px';
+		uiDiv.style.minHeight = '150px';
 		uiDiv.style.height = ((height - width) / 2) + 'px';
 		uiDiv.style.width = width + 'px';
 	}
@@ -214,13 +207,28 @@ function resize(e) {console.log("resize");
 		downButton.style.fontSize = `${99*getScale(width, height)}px`;
 		leftButton.style.fontSize = `${99*getScale(width, height)}px`;
 		rightButton.style.fontSize = `${99*getScale(width, height)}px`;
+
+		(portrait ? inDiv : uiDiv).appendChild(actionButton);
+
+		if (portrait) {
+			actionButton.style.position = "relative";
+			actionButton.style["float"] = "right";
+			actionButton.style.width = "250px";
+			actionButton.style.lineHeight = (99 + height/6) + "px";
+		} else {
+			actionButton.style.position = "absolute";
+			actionButton.style.width = "100%";
+			actionButton.style.lineHeight = (99 + height/6) + "px";
+			actionButton.style.bottom = 0;
+		}
+		
 	}
 
 	gameContext.imageSmoothingEnabled = false;
 
 	if (game) game.resize();
 
-	// centering the game canvas but on more squared screens it will be pushed to the right/top side
+	// centering the game canvas but on more squared screens it is pushed to the right/top side
 	// in order to provide space for touch screen controls on the left/bottom.
 	if (portrait) {
 		gameCanvas.style.top = gameContainer.style.top = "50%";
@@ -233,15 +241,17 @@ function resize(e) {console.log("resize");
 		gameCanvas.style.top = gameCanvas.style.marginTop = 0;
 		gameContainer.style.top = gameContainer.style.marginTop = 0;
 		gameCanvas.style.marginLeft = gameContainer.style.marginLeft =
-			`-${!state ? height / 2 : width - height < height / 6 ? width / 2 - (width-height) : height / 2.4}px`;
+			`-${width - height < height / 6 ? width / 2 - (width-height) : height / 2.4}px`;
 	}
 
 	// Reposition / resize UI buttons
-	uiDiv.children[0].style = `float:right;transform:scale(${getScale(width, height)});transform-origin:center top;`;
-	uiDiv.children[1].style = `float:right;transform:scale(${getScale(width, height)});transform-origin:right top;`;
+	// Fullscreen button
+	fullscreenButton.style = `float:right;transform:scale(${getScale(width, height)});transform-origin:right top;`;
+	// Sound button
+	soundButton.style = `float:${portrait?'left':'right'};transform:scale(${getScale(width, height)});transform-origin:${portrait?'left':'right'} top;`;
 
-	if (gameContainer.firstChild) {
-		gameContainer.firstChild.style = `top:75%;margin:auto;position:absolute;font-size:${72*getScale(width, height)}px;right:${portrait?9:1}%`;
+	if (playButton) {
+		playButton.style = `top:75%;margin:auto;position:absolute;font-size:${72*getScale(width, height)}px;right:${portrait?9:1}%`;
 	}
 
 	/*if (uiDiv.children[3]) {

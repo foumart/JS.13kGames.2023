@@ -34,30 +34,28 @@ class Tile extends GameElement {
 	}
 
 	draw() {
-		//this.context.beginPath();
 		this.context.fillStyle = this.getColor();
 		this.context.fillRect(this.getX(), this.getY(), this.width * this.scale, this.height * this.scale);
-		//this.context.closePath();
-		//this.context.imageSmoothingEnabled = true;
 
-		if (this.type > 1 && this.type < 4) return;
-		this.context.drawImage(
-			!this.type
-				? PixelArt.spritesTiles[this.frame]
-				: this.type == 1
-					? PixelArt.spritesAhu[0]
-					: PixelArt.spritesWater[this.type % 4][(this.type / 4 | 0) * 3 + this.frame]
-			,
-			this.getX(),
-			this.getY(),
-			this.width * this.scale,
-			this.height * this.scale
-		);
-		//this.context.imageSmoothingEnabled = false;
+		if (this.type < 2 || this.type > 3) {
+			this.context.drawImage(
+				!this.type
+					? PixelArt.spritesTiles[this.frame]
+					: this.type == 1
+						? PixelArt.spritesAhu[0]
+						: PixelArt.spritesWater[this.type % 4][(this.type / 4 | 0) * 3 + this.frame]
+				,
+				this.getX(),
+				this.getY(),
+				this.width * this.scale,
+				this.height * this.scale
+			);
+		}
 	}
 
 	getColor() {
-		return this.type < 3 ? "#ee8" : "#0078d7";
+		// ground base color / water base color
+		return this.type < 3 ? "#ffe0af" : "#0078d7";
 	}
 
 }

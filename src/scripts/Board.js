@@ -134,21 +134,40 @@ class Board {
 
 		this.createPlayer(stageData.x, stageData.y);
 
-		if (state) {
-			this.createButtons();
+		//if (state) this.createButtons();
+
+		//this.pattern = MapTile.buffer();// TODO: remove pattern attempts
+
+		// Generate field - add MapTiles, PathTiles and Units
+		this.field = [];
+		this.path = [];
+		this.units = [];
+		let tile, fieldArr, pathArr, mapType, unitType;
+		for(y = 0; y < this.boardHeight; y++) {
+			fieldArr = [];
+			pathArr = [];
+			for(x = 0; x < this.boardWidth; x++) {
+				mapType = this.mapData[y][x];
+				tile = new MapTile(x, y, mapType);
+				if (!mapType) tile.frame = Math.random() * 5.5 | 0;
+				fieldArr.push(tile);
+				pathArr.push(new PathTile(x, y, this.pathData[y][x]));
+				if (mapType == 2) {
+					this.units.push(new Obstacle(x, y, 4));
+				}
+
+				unitType = this.unitsData[y][x];
+				if (unitType > 0) {
+					// on the initial level make sure to place moai instead of rocks
+					// (because level compression only records 2 bits of data: empty, palm, tree, rock)
+					if (mapType == 1 && unitType == 3) unitType = 5;
+
+					this.units.push(new Unit(x, y, unitType));
+				}
+			}
+			this.field.push(fieldArr);
+			this.path.push(pathArr);
 		}
-
-		this.pattern = MapTile.buffer();
-
-		this.clear();
-	}
-
-	createPlayer(x, y) {
-		this.player = new Player(x, y);
-	}
-
-	isPassable(x, y) {
-		return !this.mapData[y][x] && this.unitsData[y][x] < 3;
 	}
 
 	extractData(map, data) {
@@ -168,7 +187,7 @@ class Board {
 		});
 	}
 
-	createButtons() {
+	/*createButtons() {
 		this.buttons = [];
 		this.buttonsArr = [];
 		let x, y, arr, button;
@@ -184,45 +203,80 @@ class Board {
 			}
 			this.buttons.push(arr);
 		}
+	}*/
+
+	createPlayer(x, y) {
+		this.player = new Player(x, y);
 	}
 
-	clear() {
-		this.field = [];
-		this.path = [];
-		this.units = [];
-		let x, y, tile, fieldArr, pathArr, mapType, unitType;
-		for(y = 0; y < this.boardHeight; y++) {
-			fieldArr = [];
-			pathArr = [];
-			for(x = 0; x < this.boardWidth; x++) {
-				mapType = this.mapData[y][x];
-				tile = new MapTile(x, y, mapType);
-				if (!mapType) tile.frame = Math.random() * 2.9 | 0;
-				fieldArr.push(tile);
-				pathArr.push(new PathTile(x, y, this.pathData[y][x]));
-				if (mapType == 2) {
-					this.units.push(new Obstacle(x, y, 4));
-				}
+	isPassable(x, y) {
+		return !this.mapData[y][x] && this.unitsData[y][x] < 3;
+	}
 
-				unitType = this.unitsData[y][x];
-				if (unitType > 0) {
-					// on the initial level make sure to place moai instead of rocks
-					// (because level compression only records 2 bits of data: empty, palm, tree, rock)
-					if (mapType == 1 && unitType == 3 && !state) unitType = 5;
 
-					this.units.push(new Unit(x, y, unitType));
-				}
-			}
-			this.field.push(fieldArr);
-			this.path.push(pathArr);
+
+
+	doAction() {
+	
+	}
+	
+	actionUp() {
+		if (!this.isPassable(this.player.x, this.player.y - 1)) {
+	
+		} else {
+			this.moveUp();
 		}
 	}
+	
+	actionDown() {
+		if (!this.isPassable(this.player.x, this.player.y+1)) {
+			console.log("stuck");
+		} else {
+			this.moveDown();
+		}
+	}
+	
+	actionLeft() {
+		if (!this.isPassable(this.player.x-1, this.player.y)) {
+	
+		} else {
+			this.moveLeft();
+		}
+	}
+	
+	actionRight() {
+		if (!this.isPassable(this.player.x+1, this.player.y)) {
+	
+		} else {
+			this.moveRight();
+		}
+	}
+	
+	moveUp() {
+		this.player.y --;
+	}
+	
+	moveDown() {
+		this.player.y ++;
+	}
+	
+	moveLeft() {
+		this.player.x --;
+	}
+	
+	moveRight() {
+		this.player.x ++;
+	}
+
+
+
+
 
 	// reposition buttons
 	resize() {
-		if (this.buttonsArr) for (let i = 0; i < this.buttonsArr.length; i ++) {
+		/*if (this.buttonsArr) for (let i = 0; i < this.buttonsArr.length; i ++) {
 			this.buttonsArr[i].resize();
-		}
+		}*/
 	}
 
 	// draw the board grid frames and the unit selection stroke on the canvas
@@ -241,6 +295,7 @@ class Board {
 			}
 		}
 
+		// draw units from top to bottom inserting the player in the proper depth
 		let drawn;
 		for (let i = 0; i < this.units.length; i ++) {
 			if (!drawn && this.player.y < this.units[i].y) {
@@ -250,11 +305,15 @@ class Board {
 			this.units[i].resize();
 		}
 
+		if (!drawn) {
+			this.player.resize();
+		}
+
 		// TODO: remove
 		//drawFPS();
 	}
 
-	buttonOver(event) {
+	/*buttonOver(event) {
 		let unit = this.field[event.target.y][event.target.x];
 		let btn = this.buttons[event.target.y][event.target.x];
 	}
@@ -267,7 +326,7 @@ class Board {
 	clickButton(event){
 		let unit = this.field[event.target.y][event.target.x];
 		console.log(unit);
-	}
+	}*/
 
 	destroy() {
 		Board.instance = null;

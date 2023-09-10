@@ -35,6 +35,11 @@ canvas {
 	width: 80px;
 	margin: 9px;
 	text-align: center;
+	-webkit-text-stroke: 0.7vmin #000000;
+}
+
+.hidden {
+	display: none;
 }
 
 .earth {
