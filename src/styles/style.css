@@ -35,8 +35,21 @@ canvas {
 	width: 80px;
 	margin: 9px;
 	text-align: center;
-	-webkit-text-stroke: 0.7vmin #000000;
+	font-weight: 900;
+	filter: drop-shadow(0 .1rem 5px #006);
 }
+
+.info {
+	padding: 1%;
+	color: #fff;
+	width: 100%;
+	font-weight: 900;
+	filter: drop-shadow(0 .1rem 5px #006);
+}
+
+/*.stroke {
+	-webkit-text-stroke: 0.7vmin #000;
+}*/
 
 .hidden {
 	display: none;

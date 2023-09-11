@@ -9,19 +9,19 @@ const gameContext = gameCanvas.getContext("2d");
 // global vars
 const intoSpeed = 99;
 const mobile = isTouchDevice();
+let portrait;
 const eventName = isTouchDevice() ? "touchstart" : "click";
 function isTouchDevice() {
 	return ("ontouchstart" in window && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent));
 }
 
 let state = 0;// changes when starting a level
-let stage = 0;// 0 - title screen, > 1 - directly load any level
+let stage = 1;// 0 - title screen, > 1 - directly load any level
 
 // global sizes
 let width;
 let height;
 let canvasScale;
-let portrait;
 
 let tween = { earth: 1, board: 0 };
 let uiState;
@@ -29,10 +29,18 @@ let uiState;
 // global objects
 let game;
 let board;
+let player;
+let action;
+
 // ui stuff
 let earth;
 let controls, upButton, leftButton, rightButton, downButton, centerButton, actionButton;
-let title, playButton, fullscreenButton, soundButton;
+let title, playButton, fullscreenButton, soundButton, uiInfo, hilight;
+
+// resources
+let wood = 3;
+let mana = 5;
+//let palms, trees, rocks;
 
 // onclick="console.log(this.innerHTML.codePointAt(0)+' : '+this.innerHTML.codePointAt(0).toString(16))"
 
@@ -42,7 +50,7 @@ function initializeGame() {
 	//window.addEventListener("orientationchange", resize, false);
 
 	document.addEventListener("keydown", onKeyDown);
-	document.addEventListener("keyup", onKeyUp);
+	//document.addEventListener("keyup", onKeyUp);
 
 	PixelArt.init();
 
@@ -59,6 +67,9 @@ function createUI() {
 	}
 	gameContainer.innerHTML = "";
 
+	uiInfo = document.createElement("div");
+	uiDiv.appendChild(uiInfo).className = "info";
+
 	if (!state && !stage) {
 		// Generate the zoom-in Earth effect
 		earth = document.createElement('div');
@@ -68,8 +79,8 @@ function createUI() {
 	}
 
 	// Fullscreen and Sound buttons
-	fullscreenButton = generateUIButton(uiDiv, '&#x1F533', toggleFullscreen);
-	soundButton = generateUIButton(uiDiv, '&#x1F50A', toggleSound);
+	fullscreenButton = generateUIButton(uiDiv, '&#x26F6', toggleFullscreen);
+	soundButton = generateUIButton(uiDiv, '&#9881', toggleSound);// sound: '&#x1F50A'
 
 	// Generate Main Menu
 	if (!state && !stage) {
@@ -97,6 +108,8 @@ function createUI() {
 						playButton.className = "button";
 						// Generate the Moai Alley title logo
 						generateScaledTitle();
+
+						uiInfo.innerHTML = "Easter Island";
 					});
 				}
 
@@ -125,6 +138,7 @@ function createUI() {
 		upButton.style = downButton.style = "margin:0;width:100%";
 
 		actionButton = generateUIButton(inDiv, '', board.doAction.bind(board));
+		uiInfo.innerHTML = `<div>Stage: ${stage}</div><br><br><div>Mana: ${mana}</div><br>Wood: ${wood}`;
 
 		document.body.style.backgroundColor = "#0078d7";
 		game = new Game(stage);
@@ -169,7 +183,7 @@ function resize(e) {
 		inDiv.style.minHeight = 'unset';
 		inDiv.style.minWidth = (140 + width/(!state ? 3 : 9)) + 'px';
 		inDiv.style.width = ((width - height) / 2) + 'px';
-		inDiv.style.height = height + 'px';///2
+		inDiv.style.height = height + 'px';
 
 		if (controls) controls.style.width = "100%";
 
@@ -201,26 +215,35 @@ function resize(e) {
 		uiDiv.style.width = width + 'px';
 	}
 
+	// Resize in-game UI elements
 	if (upButton) {
 		upButton.style.fontSize = `${99*getScale(width, height)}px`;
 		downButton.style.fontSize = `${99*getScale(width, height)}px`;
 		leftButton.style.fontSize = `${99*getScale(width, height)}px`;
 		rightButton.style.fontSize = `${99*getScale(width, height)}px`;
+		actionButton.style.fontSize = `${99*getScale(width, height)}px`;
+		actionButton.style.margin = 0;
 
+		// Depending on orientation change parent of the following:
 		(portrait ? inDiv : uiDiv).appendChild(actionButton);
+		(!portrait ? inDiv : uiDiv).appendChild(uiInfo);
 
 		if (portrait) {
 			actionButton.style.position = "relative";
 			actionButton.style["float"] = "right";
-			actionButton.style.width = "250px";
-			actionButton.style.lineHeight = (99 + height/6) + "px";
+			actionButton.style.maxWidth = "200px";
+			actionButton.style.maxHeight = "250px";
+			actionButton.style.width = actionButton.style.lineHeight = (99 + height/8) + 'px';
 		} else {
 			actionButton.style.position = "absolute";
-			actionButton.style.width = "100%";
-			actionButton.style.lineHeight = (99 + height/6) + "px";
+			actionButton.style.maxWidth = "250px";
+			actionButton.style.maxHeight = "unset";
+			actionButton.style.width = "90%";
+			actionButton.style.lineHeight = (99 + height/4) + "px";
 			actionButton.style.bottom = 0;
 		}
-		
+
+		updateInGameUI();
 	}
 
 	gameContext.imageSmoothingEnabled = false;
@@ -243,16 +266,21 @@ function resize(e) {
 			`-${width - height < height / 6 ? width / 2 - (width-height) : height / 2.4}px`;
 	}
 
-	// Reposition / resize UI buttons
+	// Reposition / resize general UI buttons
 	// Fullscreen button
-	fullscreenButton.style = `float:right;transform:scale(${getScale(width, height)});transform-origin:right top;`;
+	fullscreenButton.style = `float:right;font-size:${72*getScale(width, height)}px;`;
 	// Sound button
-	soundButton.style = `float:${portrait?'left':'right'};transform:scale(${getScale(width, height)});transform-origin:${portrait?'left':'right'} top;`;
-
+	soundButton.style = `float:right;font-size:${72*getScale(width, height)}px;text-align:right`;
+	// Play button
 	if (playButton) {
 		playButton.style = `top:75%;margin:auto;position:absolute;font-size:${72*getScale(width, height)}px;right:${portrait?9:1}%`;
 	}
 
+	uiInfo.style.fontSize = 40 * getScale(width, height) + "px";
+	uiInfo.children[0].style.fontSize = 60 * getScale(width, height) + "px";
+	uiInfo.children[3].style.fontSize = 43 * getScale(width, height) + "px";
+
+	// Credits?
 	/*if (uiDiv.children[3]) {
 		uiDiv.children[3].style = `top:68%;margin:auto;position:absolute;font-size:${64*this.getScale(width, height)}px;right:20%`;
 	}*/

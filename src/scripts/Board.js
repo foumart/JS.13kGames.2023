@@ -204,66 +204,176 @@ class Board {
 	}*/
 
 	createPlayer(x, y) {
-		this.player = new Player(x, y);
+		player = new Player(x, y);
 	}
 
 	isPassable(x, y) {
 		return !this.mapData[y][x] && this.unitsData[y][x] < 3;
 	}
 
+	getUnit(x, y) {
+		let id = -1;
+		this.units.forEach((unit, index) => {
+			if (unit.x == x && unit.y == y) {
+				id = index;
+			}
+		});
 
+		return id;
+	}
 
-
+	// Perform action (chop, pave, carve, etc.)
 	doAction() {
-	
+		//console.log(action, this.mapData[player.y][player.x], this.unitsData[player.y][player.x], this.pathData[player.y][player.x]);
+		let unit;
+
+		if (action == 1) {
+			this.placeRoad(player.x, player.y);
+			
+		} else if (action == 2) {
+			unit = this.getUnit(player.x, player.y);
+			
+			if (unit > -1) {
+				this.units.splice(unit, 1);
+				this.unitsData[player.y][player.x] = 0;
+				
+			}
+		}
+
+		updateInGameUI();
+	}
+
+	// Place a Road tile with regards to all adjacent Road tiles
+	placeRoad(x, y, after) {
+		if (this.pathData[y][x + 1] > -1 && this.pathData[y][x - 1] > -1 && this.pathData[y + 1][x] > -1 && this.pathData[y - 1][x] > -1) {
+			// ╬
+			this.pathData[y][x] = 15;
+		} else if (this.pathData[y][x + 1] > -1 && this.pathData[y][x - 1] > -1 && this.pathData[y + 1][x] > -1) {
+			// ╦
+			this.pathData[y][x] = 8;
+		} else if (this.pathData[y][x + 1] > -1 && this.pathData[y][x - 1] > -1 && this.pathData[y - 1][x] > -1) {
+			// ╩
+			this.pathData[y][x] = 10;
+		} else if (this.pathData[y][x - 1] > -1 && this.pathData[y + 1][x] > -1 && this.pathData[y - 1][x] > -1) {
+			// ╣
+			this.pathData[y][x] = 9;
+		} else if (this.pathData[y][x + 1] > -1 && this.pathData[y + 1][x] > -1 && this.pathData[y - 1][x] > -1) {
+			// ╠
+			this.pathData[y][x] = 7;
+		} else if (this.pathData[y][x + 1] > -1 && this.pathData[y][x - 1] > -1) {
+			// =
+			this.pathData[y][x] = 6;
+		} else if (this.pathData[y + 1][x] > -1 && this.pathData[y - 1][x] > -1) {
+			// ||
+			this.pathData[y][x] = 5;
+		} else if (this.pathData[y][x + 1] > -1 && this.pathData[y + 1][x] > -1) {
+			// ╔
+			this.pathData[y][x] = 11;
+		} else if (this.pathData[y][x + 1] > -1 && this.pathData[y - 1][x] > -1) {
+			// ╚
+			this.pathData[y][x] = 14;
+		} else if (this.pathData[y][x - 1] > -1 && this.pathData[y + 1][x] > -1) {
+			// ╔
+			this.pathData[y][x] = 12;
+		} else if (this.pathData[y][x - 1] > -1 && this.pathData[y - 1][x] > -1) {
+			// ╚
+			this.pathData[y][x] = 13;
+		} else if (this.pathData[y][x - 1] > -1) {
+			// ]
+			this.pathData[y][x] = 4;
+		} else if (this.pathData[y][x + 1] > -1) {
+			// [
+			this.pathData[y][x] = 2;
+		} else if (this.pathData[y + 1][x] > -1) {
+			// п
+			this.pathData[y][x] = 3;
+		} else if (this.pathData[y - 1][x] > -1) {
+			// u
+			this.pathData[y][x] = 1;
+		} else {
+			// o
+			this.pathData[y][x] = 0;
+		}
+
+		this.path[y][x].type = this.pathData[y][x];
+
+		// update the adjacent road tile as well
+		if (!after) {
+			if (this.pathData[y][x + 1] > -1 && !this.mapData[y][x + 1]) this.placeRoad(x + 1, y, 1);
+			if (this.pathData[y][x - 1] > -1 && !this.mapData[y][x - 1]) this.placeRoad(x - 1, y, 1);
+			if (this.pathData[y + 1][x] > -1 && !this.mapData[y + 1][x]) this.placeRoad(x, y + 1, 1);
+			if (this.pathData[y - 1][x] > -1 && !this.mapData[y - 1][x]) this.placeRoad(x, y - 1, 1);
+		}
 	}
 	
 	actionUp() {
-		if (!this.isPassable(this.player.x, this.player.y - 1)) {
-	
-		} else {
+		if (!this.isPassable(player.x, player.y - 1)) {
+			console.log(this.mapData[player.y - 1][player.x], this.unitsData[player.y - 1][player.x], this.pathData[player.y - 1][player.x]);
+		} else if (player.offsetY == -0.5) {
 			this.moveUp();
 		}
 	}
 	
 	actionDown() {
-		if (!this.isPassable(this.player.x, this.player.y+1)) {
-			console.log("stuck");
-		} else {
+		if (!this.isPassable(player.x, player.y + 1)) {
+			const unit = this.getUnit(player.x, player.y + 1);
+			if (this.units[unit].type == 3) {
+				this.units[unit].highlighted = true;
+				hilight = this.units[unit];
+				action = 5;
+			}
+			updateInGameUI();
+		} else if (player.offsetY == -0.5) {
 			this.moveDown();
 		}
 	}
 	
 	actionLeft() {
-		if (!this.isPassable(this.player.x-1, this.player.y)) {
+		if (!this.isPassable(player.x - 1, player.y)) {
 	
-		} else {
+		} else if (!player.offsetX) {
 			this.moveLeft();
 		}
 	}
 	
 	actionRight() {
-		if (!this.isPassable(this.player.x+1, this.player.y)) {
+		if (!this.isPassable(player.x + 1, player.y)) {
 	
-		} else {
+		} else if (!player.offsetX) {
 			this.moveRight();
 		}
 	}
 	
 	moveUp() {
-		this.player.y --;
+		if (hilight) hilight.highlighted = false;
+		player.y --;
+		player.offsetY = 0.5;
+		TweenFX.to(player, 8, {offsetY: -0.5}, 2);
+		updateInGameUI();
 	}
 	
 	moveDown() {
-		this.player.y ++;
+		if (hilight) hilight.highlighted = false;
+		player.y ++;
+		player.offsetY = -1.5;
+		TweenFX.to(player, 8, {offsetY: -0.5}, 2);
+		updateInGameUI();
 	}
 	
 	moveLeft() {
-		this.player.x --;
+		if (hilight) hilight.highlighted = false;
+		player.x --;
+		player.offsetX = 1;
+		TweenFX.to(player, 8, {offsetX: 0}, 2);
+		updateInGameUI();
 	}
 	
 	moveRight() {
-		this.player.x ++;
+		if (hilight) hilight.highlighted = false;
+		player.x ++;
+		player.offsetX = -1;
+		TweenFX.to(player, 8, {offsetX: 0}, 2);
+		updateInGameUI();
 	}
 
 
@@ -297,15 +407,15 @@ class Board {
 		// Draw units from top to bottom inserting the player in the proper depth position
 		let drawn;
 		for (let i = 0; i < this.units.length; i ++) {
-			if (!drawn && this.player.y < this.units[i].y) {
+			if (!drawn && player.y < this.units[i].y) {
 				drawn = true;
-				this.player.resize();
+				player.resize();
 			}
 			this.units[i].resize();
 		}
 
 		if (!drawn) {
-			this.player.resize();
+			player.resize();
 		}
 
 		// TODO: remove

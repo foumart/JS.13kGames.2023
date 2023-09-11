@@ -16,7 +16,8 @@ class Unit extends Tile {
 				this.offsetY = -0.55;
 				break;
 			case 2: // tree (level data == 2)
-				this.offsetY = -0.4;
+				this.offsetX = -0.1;
+				this.offsetY = -0.5;
 				break;
 			case 3: // rock (level data == 3)
 				this.offsetX = -0.075;
@@ -51,7 +52,7 @@ class Unit extends Tile {
 				this.frame ++;
 				if (this.frame > 2) this.frame = 0;
 				this.animate();
-			}, blink ? 120 : 600 + Math.random() * 600);
+			}, blink ? 99 : 600 + Math.random() * 600);
 		}
 	}
 
@@ -78,5 +79,17 @@ class Unit extends Tile {
 			this.width / this.S * this.W,
 			this.height / this.S * this.H
 		);
+
+		if (this.highlighted) {// TODO
+			this.context.beginPath(); 
+			this.context.strokeStyle = '#fff';
+			this.context.lineWidth = 9;
+			this.context.strokeRect(
+				this.getOffsetX() + (this.offsetX + this.x) * this.elementSize * this.scale,
+				this.getOffsetY() + (this.offsetY + (this.y -1) + this.tilt) * this.elementSize * this.scale * this.tilt,
+				this.width / this.S * this.W,
+				this.height / this.S * this.H
+			);
+		}
 	}
 }

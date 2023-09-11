@@ -8,18 +8,17 @@ class Game {
 		Game.instance = this;
 		const stageData = this.getStageData(this.stage);
 		this.stageName = stageData.name;
-		this.board = new Board(stageData);
-		board = this.board;
+		board = new Board(stageData);
 		this.start();
 	}
 
 	start() {
-		this.board.draw();
+		board.draw();
 		this.loop = setInterval(() => {
 			if (state <= 1) {
 				// gameplay
 				this.step ++;
-				if (!earth) this.board.draw();
+				if (!earth) board.draw();
 			} else {
 				// switch state - will be loading new level
 				clearInterval(this.loop);
@@ -30,14 +29,14 @@ class Game {
 	}
 
 	resize() {
-		this.board.resize();
-		this.board.draw();
+		board.resize();
+		board.draw();
 	}
 
 	destroy() {
 		Game.instance = null;
-		this.board.destroy();
-		this.board = null;
+		board.destroy();
+		board = null;
 	}
 
 	getStageData(id) {
@@ -54,7 +53,7 @@ class Game {
 				size: 5, x: 2, y: 2,
 				map: "f7f0300000c0",
 				data: "00004426420c",
-				path: "       5    5    ec   2d"
+				path: "  0"//"       5    5    ec   2d"
 			},
 			{
 				name: "Stage 1",
