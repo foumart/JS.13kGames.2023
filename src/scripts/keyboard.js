@@ -8,9 +8,9 @@ function onKeyDown(event) {//console.log(event.keyCode)
 		if (event.keyCode == 13) {
 			debugger;
 		} else if (event.keyCode == 82) {// R reset
-			console.log(board.mapData);
-			console.log(board.unitsData);
-			console.log(board.pathData);
+			console.log("mapData:", board.mapData);
+			console.log("unitsData:", board.unitsData);
+			console.log("pathData:", board.pathData);
 			console.log(player.x, player.y);
 			//resize();
 			//Board.instance.scale = 1.5;

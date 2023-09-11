@@ -130,18 +130,17 @@ function createUI() {
 		game = new Game(stage);// had to add this here to avoid an error when directly loading a level
 		// Generate In-Game UI
 		controls = document.createElement('div');
-		controls.style = "bottom:0;transform-origin:bottom left";
 		inDiv.appendChild(controls);
 		upButton = generateUIButton(controls, '&#x25B2', board.actionUp.bind(board));//^
 		leftButton = generateUIButton(controls, '&#x25C0', board.actionLeft.bind(board));//<
 		rightButton = generateUIButton(controls, '&#x25B6', board.actionRight.bind(board));//>
 		downButton = generateUIButton(controls, '&#x25BC', board.actionDown.bind(board));//v
 
-		leftButton.style = "float:left;margin:0";
-		rightButton.style = "float:right;margin:0;width:80px";
+		leftButton.style = "float:left;margin:0 0 0 -5px";
+		rightButton.style = "float:right;margin:0";
 		upButton.style = downButton.style = "margin:0;width:100%";
 
-		actionButton = generateUIButton(inDiv, '', board.doAction.bind(board));
+		actionButton = generateUIButton(inDiv, '', board.doAction.bind(board), "icon action");
 
 		document.body.style.backgroundColor = "#0078d7";
 		game = new Game(stage);
@@ -184,11 +183,10 @@ function resize(e) {
 		gameContainer.style.height = height + "px";
 
 		inDiv.style.minHeight = 'unset';
-		inDiv.style.minWidth = (140 + width/(!state ? 3 : 9)) + 'px';
+		inDiv.style.minWidth = (160 + width/(!state ? 3 : 9)) + 'px';
+		inDiv.style.maxHeight = 'unset';
 		inDiv.style.width = ((width - height) / 2) + 'px';
 		inDiv.style.height = height + 'px';
-
-		if (controls) controls.style.width = "100%";
 
 		uiDiv.style.minHeight = 'unset';
 		uiDiv.style.minWidth = '250px';
@@ -204,50 +202,44 @@ function resize(e) {
 		gameContainer.style.width = width + "px";
 		gameContainer.style.height = width + "px";
 
+		e = 99 + height/8;
 		inDiv.style.minWidth = 'unset';
-		inDiv.style.minHeight = (99 + height/6) + 'px';
-		inDiv.style.height = (state ? (height - width) / 2 : height / 2) + 'px';
+		inDiv.style.maxHeight = (e < 350 ? 350 : e) + 'px';
+		inDiv.style.minHeight = (200 + height/20) + 'px';
+		inDiv.style.height = '100%';
 		inDiv.style.width = width + 'px';
 
 		if (state) inDiv.style.bottom = 0;
 
-		if (controls) controls.style.width = "auto";
-
 		uiDiv.style.maxWidth = 'unset';
 		uiDiv.style.minWidth = 'unset';
-		uiDiv.style.minHeight = '200px';
+		uiDiv.style.minHeight = (e) + 'px';
 		uiDiv.style.height = (height - width) + 'px';
 		uiDiv.style.width = width + 'px';
 	}
 
 	// Resize in-game UI elements
 	if (upButton) {
-		upButton.style.fontSize = `${99*getScale(width, height)}px`;
-		downButton.style.fontSize = `${99*getScale(width, height)}px`;
-		leftButton.style.fontSize = `${99*getScale(width, height)}px`;
-		rightButton.style.fontSize = `${99*getScale(width, height)}px`;
-		actionButton.style.fontSize = `${99*getScale(width, height)}px`;
-		actionButton.style.margin = 0;
+		upButton.style.fontSize = `${128*getScale(width, height)}px`;
+		downButton.style.fontSize = `${128*getScale(width, height)}px`;
+		leftButton.style.fontSize = `${128*getScale(width, height)}px`;
+		rightButton.style.fontSize = `${128*getScale(width, height)}px`;
+		actionButton.style.fontSize = `${128*getScale(width, height)}px`;
 
 		// Depending on orientation change parent of the following:
 		(portrait ? inDiv : uiDiv).appendChild(actionButton);
 		(!portrait ? inDiv : uiDiv).appendChild(uiInfo);
 
 		if (portrait) {
-			actionButton.style.position = "relative";
-			actionButton.style["float"] = "right";
-			actionButton.style.maxWidth = "200px";
-			actionButton.style.maxHeight = "300px";
-			actionButton.style.width = actionButton.style.lineHeight = (99 + height/9) + 'px';
+			controls.style = "bottom:auto;width:auto";
+			actionButton.style.maxWidth = "250px";
 			actionButton.style.height = "100%";
+			actionButton.style.lineHeight = (50 + height/9) + 'px';
 		} else {
-			actionButton.style.position = "absolute";
+			controls.style = "bottom:0;width:100%";
 			actionButton.style.maxWidth = "300px";
-			actionButton.style.maxHeight = "unset";
-			actionButton.style.width = "100%";
 			actionButton.style.height = (99 + height/3) + "px";
 			actionButton.style.lineHeight = (99 + height/4) + "px";
-			actionButton.style.bottom = 0;
 		}
 
 		updateInGameUI();

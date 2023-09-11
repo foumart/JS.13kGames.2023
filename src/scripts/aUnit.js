@@ -25,10 +25,7 @@ class Unit extends Tile {
 				this.S = 14;
 				break;
 			case 5: // moai
-				this.H = 20;
-				this.W = 14;
-				this.offsetX = 0.07;
-				this.offsetY = -1;
+				this.convertToMoai();
 				if (!state && (x > 10 || y > 6)) this.frame = 1;
 				if (!state && (x < 3 && y > 6)) this.frame = 3;
 				break;
@@ -41,6 +38,39 @@ class Unit extends Tile {
 			default: // lake (4)
 				break;
 		}
+	}
+
+	convertToMoai() {
+		this.highlighted = false;
+		this.type = 5;
+		this.H = 20;
+		this.W = 14;
+		this.offsetX = 0.07;
+		this.offsetY = this.y < 2 ? -1 : -0.7;
+	}
+
+	moveUp(speed = 8) {
+		this.y --;
+		this.offsetY = 0.5;
+		TweenFX.to(this, speed, {offsetY: -0.5}, 2);
+	}
+	
+	moveDown(speed = 8) {
+		this.y ++;
+		this.offsetY = -1.5;
+		TweenFX.to(this, speed, {offsetY: -0.5}, 2);
+	}
+	
+	moveLeft(speed = 8) {
+		this.x --;
+		this.offsetX = 1;
+		TweenFX.to(this, speed, {offsetX: 0}, 2);
+	}
+	
+	moveRight(speed = 8) {
+		this.x ++;
+		this.offsetX = -1;
+		TweenFX.to(this, speed, {offsetX: 0}, 2);
 	}
 
 	animate() {
@@ -80,9 +110,9 @@ class Unit extends Tile {
 			this.height / this.S * this.H
 		);
 
-		if (this.highlighted) {// TODO
+		if (this.highlighted || this.attached) {// TODO: make a proper selection
 			this.context.beginPath(); 
-			this.context.strokeStyle = '#fff';
+			this.context.strokeStyle = this.attached ? '#0f0' : '#fff';
 			this.context.lineWidth = 9;
 			this.context.strokeRect(
 				this.getOffsetX() + (this.offsetX + this.x) * this.elementSize * this.scale,

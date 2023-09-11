@@ -7,12 +7,17 @@ function updateInGameUI() {
 	actionButton.style.pointerEvents = "all";
 
 	let html = '';
-	//if (hilight) hilight.highlighted 
 
+	if (action > 6) {
+		html = `<div style="width:100%;font-size:${80*getScale(width, height)}px;margin-top:${90*getScale(width, height)}px">Walk</div>`;
+		html += `<div style="width:100%;font-size:${36*getScale(width, height)}px;margin-top:${160*getScale(width, height)}px">-${predictRock*4} Stone</div>`;
+		html += `<div style="width:100%;font-size:${36*getScale(width, height)}px;margin-top:${200*getScale(width, height)}px">-1 Mana</div>`;
+		actionButton.innerHTML = html + `&#x1f5ff`;
+	} else 
 	if (action > 2) {
 		html = `<div style="width:100%;font-size:${80*getScale(width, height)}px;margin-top:${90*getScale(width, height)}px">Carve</div>`;
 		html += `<div style="width:100%;font-size:${36*getScale(width, height)}px;margin-top:${160*getScale(width, height)}px">+10 Stone</div>`;
-		html += `<div style="width:100%;font-size:${36*getScale(width, height)}px;margin-top:${200*getScale(width, height)}px">-1 Mana</div>`;
+		html += `<div style="width:100%;font-size:${36*getScale(width, height)}px;margin-top:${200*getScale(width, height)}px">-1 Wood</div>`;
 		actionButton.innerHTML = html + `&#x1f528`;
 	} else 
 
@@ -53,8 +58,9 @@ function updateInGameUI() {
 		actionButton.innerHTML = "";
 	}
 
-	uiInfo.innerHTML = `<div>Stage: ${stage}</div><br><br><div>Stone: ${rock * 4}</div><br><div> Wood: ${wood}</div><br> Mana: ${mana}`;
+	uiInfo.innerHTML = `<div>Stage: ${stage}</div><br><br><div>Stone: ${rock * 4}</div><br><div>Wood: ${wood}</div><br><div>Mana: ${mana}</div>M`;
 	uiInfo.children[0].style.fontSize = 60 * getScale(width, height) + "px";
+	uiInfo.children[7].style.color = mana == 1 ? "#fbb" : "#fff";
 }
 
 function disableActionButton() {

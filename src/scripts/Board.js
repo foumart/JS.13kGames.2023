@@ -225,39 +225,8 @@ class Board {
 		return id;
 	}
 
-	// Perform action (chop, pave, carve, etc.)
-	doAction() {
-		console.log(action, this.mapData[player.y][player.x], this.unitsData[player.y][player.x], this.pathData[player.y][player.x]);
-		let unit;
-
-		if (action == 1) {
-			if (rock < predictRock || wood < 1) {
-				// TODO: [button disabled] sound
-			} else {
-				this.placeRoad(player.x, player.y);
-				rock -= predictRock;
-				wood -= 1;
-			}
-		} else if (action == 2) {
-			unit = this.getUnit(player.x, player.y);
-
-			if (unit > -1) {
-				if (mana < 2) {
-					// TODO: [button disabled] sound
-				} else {
-					unit = this.units.splice(unit, 1)[0];
-					this.unitsData[player.y][player.x] = 0;
-					wood += (4-unit.type);
-					mana -= 1;
-				}
-			}
-		}
-
-		updateInGameUI();
-	}
-
-	// Place a Road tile with regards to all adjacent Road tiles
-	// With prediction applied the function only modifies predictRock
+	// Place a Road tile with regards to all adjacent Road tiles.
+	// When prediction is applied the function only modifies predictRock.
 	placeRoad(x, y, adjacent = 0, prediction = 0) {
 		if (prediction == 1 || !adjacent) predictRock = 0;
 		if (this.pathData[y][x + 1] > -1 && this.pathData[y][x - 1] > -1 && this.pathData[y + 1][x] > -1 && this.pathData[y - 1][x] > -1) {
@@ -312,7 +281,7 @@ class Board {
 
 		this.path[y][x].type = this.pathData[y][x];
 
-		// update the adjacent road tiles as well, or just get predictions for them
+		// Update the adjacent road tiles as well, or just get predictions for them (prediction*2 to not get into an infinite loop)
 		if (!adjacent || prediction == 1) {
 			if (this.pathData[y][x + 1] > -1 && !this.mapData[y][x + 1]) this.placeRoad(x + 1, y, 1, prediction*2);
 			if (this.pathData[y][x - 1] > -1 && !this.mapData[y][x - 1]) this.placeRoad(x - 1, y, 1, prediction*2);
@@ -320,26 +289,77 @@ class Board {
 			if (this.pathData[y - 1][x] > -1 && !this.mapData[y - 1][x]) this.placeRoad(x, y - 1, 1, prediction*2);
 		}
 	}
+
+	// Perform action (chop, pave, carve, etc.)
+	doAction() {
+		console.log(action, this.mapData[player.y][player.x], this.unitsData[player.y][player.x], this.pathData[player.y][player.x]);
+		let unit;
+
+		if (action == 1) {
+			if (rock < predictRock || wood < 1) {
+				// TODO: [button disabled] sound
+			} else {
+				this.placeRoad(player.x, player.y);
+				rock -= predictRock;
+				wood -= 1;
+			}
+		} else if (action == 2) {
+			unit = this.getUnit(player.x, player.y);
+
+			if (unit > -1) {
+				if (mana < 2) {
+					// TODO: [button disabled] sound
+				} else {
+					unit = this.units.splice(unit, 1)[0];
+					this.unitsData[player.y][player.x] = 0;
+					wood += (4-unit.type);
+					mana -= 1;
+				}
+			}
+		}
+
+		updateInGameUI();
+	}
 	
 	actionUp() {
 		if (!this.isPassable(player.x, player.y - 1)) {
 			console.log(this.mapData[player.y - 1][player.x], this.unitsData[player.y - 1][player.x], this.pathData[player.y - 1][player.x]);
 		} else if (player.offsetY == -0.5) {
-			this.moveUp();
+			this.removeHilight();
+			player.moveUp();
+			updateInGameUI();
 		}
 	}
 	
 	actionDown() {
 		if (!this.isPassable(player.x, player.y + 1)) {
-			const unit = this.getUnit(player.x, player.y + 1);
-			if (this.units[unit].type == 3) {
-				this.units[unit].highlighted = true;
-				hilight = this.units[unit];
-				action = 5;
+			const unit = this.units[this.getUnit(player.x, player.y + 1)];
+			if (unit.highlighted) {
+				if (unit.type == 3) {// Carve!
+					// TODO: [carving] sound
+					unit.convertToMoai();
+				}
+			} else if (unit.attached) {// Swap with Moai
+				// TODO: [swap / move] sound
+				player.moveDown(20);
+				unit.moveUp(20);
+				this.unitsData[player.y][player.x] = 0;
+				this.unitsData[unit.y][unit.x] = 5;
+			} else
+			if (unit.type == 3 || unit.type == 5) {
+				if (unit.type == 3) {
+					unit.highlighted = 1;
+				} else {
+					unit.attached = 1;
+				}
+				hilight = unit;
+				action = 2 + unit.type;
 			}
 			updateInGameUI();
 		} else if (player.offsetY == -0.5) {
-			this.moveDown();
+			this.removeHilight();
+			player.moveDown();
+			updateInGameUI();
 		}
 	}
 	
@@ -347,7 +367,9 @@ class Board {
 		if (!this.isPassable(player.x - 1, player.y)) {
 	
 		} else if (!player.offsetX) {
-			this.moveLeft();
+			this.removeHilight();
+			player.moveLeft();
+			updateInGameUI();
 		}
 	}
 	
@@ -355,45 +377,16 @@ class Board {
 		if (!this.isPassable(player.x + 1, player.y)) {
 	
 		} else if (!player.offsetX) {
-			this.moveRight();
+			this.removeHilight();
+			player.moveRight();
+			updateInGameUI();
 		}
-	}
-	
-	moveUp() {
-		this.removeHilight();
-		player.y --;
-		player.offsetY = 0.5;
-		TweenFX.to(player, 8, {offsetY: -0.5}, 2);
-		updateInGameUI();
-	}
-	
-	moveDown() {
-		this.removeHilight();
-		player.y ++;
-		player.offsetY = -1.5;
-		TweenFX.to(player, 8, {offsetY: -0.5}, 2);
-		updateInGameUI();
-	}
-	
-	moveLeft() {
-		this.removeHilight();
-		player.x --;
-		player.offsetX = 1;
-		TweenFX.to(player, 8, {offsetX: 0}, 2);
-		updateInGameUI();
-	}
-	
-	moveRight() {
-		this.removeHilight();
-		player.x ++;
-		player.offsetX = -1;
-		TweenFX.to(player, 8, {offsetX: 0}, 2);
-		updateInGameUI();
 	}
 
 	removeHilight() {
 		if (hilight) {
 			hilight.highlighted = false;
+			hilight.attached = false;
 			action = 0;
 		}
 	}
