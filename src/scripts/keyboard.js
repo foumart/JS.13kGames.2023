@@ -13,7 +13,7 @@ function onKeyDown(event) {//console.log(event.keyCode)
 			console.log(board.pathData);
 			console.log(player.x, player.y);
 			//resize();
-			Board.instance.scale = 1.5;
+			//Board.instance.scale = 1.5;
 		} else if (event.keyCode == 32) {
 			// action (chop a tree, carve a rock, pave a road)
 			board.doAction();

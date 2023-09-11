@@ -38,8 +38,12 @@ let controls, upButton, leftButton, rightButton, downButton, centerButton, actio
 let title, playButton, fullscreenButton, soundButton, uiInfo, hilight;
 
 // resources
-let wood = 3;
-let mana = 5;
+let wood;
+let mana;
+let rock;
+// resource needed prediction
+let predictRock = 0;
+
 //let palms, trees, rocks;
 
 // onclick="console.log(this.innerHTML.codePointAt(0)+' : '+this.innerHTML.codePointAt(0).toString(16))"
@@ -59,13 +63,13 @@ function initializeGame() {
 }
 
 function createUI() {
+	gameContainer.innerHTML = "";
 	uiDiv.innerHTML = "";
 	inDiv.innerHTML = "";
 	if (!state) {
 		title = document.createElement("div");
 		inDiv.appendChild(title).className = "title";
 	}
-	gameContainer.innerHTML = "";
 
 	uiInfo = document.createElement("div");
 	uiDiv.appendChild(uiInfo).className = "info";
@@ -73,7 +77,7 @@ function createUI() {
 	if (!state && !stage) {
 		// Generate the zoom-in Earth effect
 		earth = document.createElement('div');
-		earth.innerHTML = '<svg viewBox="0 0 36 36"><circle fill="#0078D7" cx="18" cy="18" r="18"/><path fill="#5CD13B" d="M30.13,23.75,24.5,19.5l-3,.58-1.08,1.17-1.89-.91,1-1.51-2.86-.57-.31-2.35,1.72-1.1,1.88,1.1,2.12-4.47,3.76-.55.24-1.65,2-.47-4.93-5-.32,2.36-2.26.73L19.47,5l2.45-1.92L18.67,1.92,11.34,3.73l-2-1.51A16.64,16.64,0,0,0,3.66,7.15l1.61-.41,1.57.94-.23,2.59,1.41,3L19.92,22,18.5,24.5l3.17,3.67-1.83,6.5h1.08l6.5-5.25,1.25-2.75,2.2-1.83Z"/></svg>';//'&#x1F30E';//getEmojiCode(0);
+		earth.innerHTML = '<svg viewBox="0 0 36 36"><circle fill="#0078d7" cx="18" cy="18" r="18"/><path fill="#5cd13b" d="M30.13,23.75,24.5,19.5l-3,.58-1.08,1.17-1.89-.91,1-1.51-2.86-.57-.31-2.35,1.72-1.1,1.88,1.1,2.12-4.47,3.76-.55.24-1.65,2-.47-4.93-5-.32,2.36-2.26.73L19.47,5l2.45-1.92L18.67,1.92,11.34,3.73l-2-1.51A16.64,16.64,0,0,0,3.66,7.15l1.61-.41,1.57.94-.23,2.59,1.41,3L19.92,22,18.5,24.5l3.17,3.67-1.83,6.5h1.08l6.5-5.25,1.25-2.75,2.2-1.83Z"/></svg>';
 		earth.className = "earth";
 		mainDiv.insertBefore(earth, gameCanvas);
 	}
@@ -128,17 +132,16 @@ function createUI() {
 		controls = document.createElement('div');
 		controls.style = "bottom:0;transform-origin:bottom left";
 		inDiv.appendChild(controls);
-		upButton = generateUIButton(controls, '&#x25B2', board.moveUp.bind(board));//^
-		leftButton = generateUIButton(controls, '&#x25C0', board.moveLeft.bind(board));//<
-		rightButton = generateUIButton(controls, '&#x25B6', board.moveRight.bind(board));//>
-		downButton = generateUIButton(controls, '&#x25BC', board.moveDown.bind(board));//v
+		upButton = generateUIButton(controls, '&#x25B2', board.actionUp.bind(board));//^
+		leftButton = generateUIButton(controls, '&#x25C0', board.actionLeft.bind(board));//<
+		rightButton = generateUIButton(controls, '&#x25B6', board.actionRight.bind(board));//>
+		downButton = generateUIButton(controls, '&#x25BC', board.actionDown.bind(board));//v
 
 		leftButton.style = "float:left;margin:0";
 		rightButton.style = "float:right;margin:0;width:80px";
 		upButton.style = downButton.style = "margin:0;width:100%";
 
 		actionButton = generateUIButton(inDiv, '', board.doAction.bind(board));
-		uiInfo.innerHTML = `<div>Stage: ${stage}</div><br><br><div>Mana: ${mana}</div><br>Wood: ${wood}`;
 
 		document.body.style.backgroundColor = "#0078d7";
 		game = new Game(stage);
@@ -188,8 +191,9 @@ function resize(e) {
 		if (controls) controls.style.width = "100%";
 
 		uiDiv.style.minHeight = 'unset';
-		uiDiv.style.minWidth = '200px';
-		uiDiv.style.width = ((width - height) / 2) + 'px';
+		uiDiv.style.minWidth = '250px';
+		uiDiv.style.maxWidth = '350px';
+		uiDiv.style.width = ((width - height) / 1.8) + 'px';
 		uiDiv.style.height = height/(2-state) + 'px';
 		uiDiv.style.right = 0;
 	} else {
@@ -209,9 +213,10 @@ function resize(e) {
 
 		if (controls) controls.style.width = "auto";
 
+		uiDiv.style.maxWidth = 'unset';
 		uiDiv.style.minWidth = 'unset';
-		uiDiv.style.minHeight = '150px';
-		uiDiv.style.height = ((height - width) / 2) + 'px';
+		uiDiv.style.minHeight = '200px';
+		uiDiv.style.height = (height - width) + 'px';
 		uiDiv.style.width = width + 'px';
 	}
 
@@ -232,13 +237,15 @@ function resize(e) {
 			actionButton.style.position = "relative";
 			actionButton.style["float"] = "right";
 			actionButton.style.maxWidth = "200px";
-			actionButton.style.maxHeight = "250px";
-			actionButton.style.width = actionButton.style.lineHeight = (99 + height/8) + 'px';
+			actionButton.style.maxHeight = "300px";
+			actionButton.style.width = actionButton.style.lineHeight = (99 + height/9) + 'px';
+			actionButton.style.height = "100%";
 		} else {
 			actionButton.style.position = "absolute";
-			actionButton.style.maxWidth = "250px";
+			actionButton.style.maxWidth = "300px";
 			actionButton.style.maxHeight = "unset";
-			actionButton.style.width = "90%";
+			actionButton.style.width = "100%";
+			actionButton.style.height = (99 + height/3) + "px";
 			actionButton.style.lineHeight = (99 + height/4) + "px";
 			actionButton.style.bottom = 0;
 		}
@@ -277,8 +284,6 @@ function resize(e) {
 	}
 
 	uiInfo.style.fontSize = 40 * getScale(width, height) + "px";
-	uiInfo.children[0].style.fontSize = 60 * getScale(width, height) + "px";
-	uiInfo.children[3].style.fontSize = 43 * getScale(width, height) + "px";
 
 	// Credits?
 	/*if (uiDiv.children[3]) {

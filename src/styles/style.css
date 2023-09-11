@@ -40,9 +40,10 @@ canvas {
 }
 
 .info {
-	padding: 1%;
+	padding: 1vh 0 0 2vw;
 	color: #fff;
-	width: 100%;
+	width: 50%;
+	min-width: 300px;
 	font-weight: 900;
 	filter: drop-shadow(0 .1rem 5px #006);
 }

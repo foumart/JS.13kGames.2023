@@ -50,35 +50,35 @@ class Game {
 			},
 			{
 				name: "Stage 1",
-				size: 5, x: 2, y: 2,
+				size: 5, x: 2, y: 2, wood: 5, rock: 3, mana: 5,
 				map: "f7f0300000c0",
 				data: "00004426420c",
 				path: "  0"//"       5    5    ec   2d"
 			},
 			{
 				name: "Stage 1",
-				size: 5, x: 2, y: 2,
+				size: 5, x: 2, y: 2, wood: 5, rock: 3, mana: 5,
 				map: "f7f0308000c0",
 				data: "00020010500d",
 				path: ""
 			},
 			{
 				name: "Stage 1",
-				size: 5, x: 2, y: 2,
+				size: 5, x: 2, y: 2, wood: 5, rock: 3, mana: 5,
 				map: "c4f0308000c0",
 				data: "00020010500d",
 				path: ""
 			},
 			{
 				name: "Stage 1",
-				size: 5, x: 2, y: 2,
+				size: 5, x: 2, y: 2, wood: 5, rock: 3, mana: 5,
 				map: "d5c0022800083",
 				data: "00007c424ec2c",
 				path: ""
 			},
 			{
 				name: "Stage 2",
-				size: 5, x: 3, y: 0,
+				size: 5, x: 3, y: 0, wood: 5, rock: 3, mana: 5,
 				map: "00033c000c",
 				data: "007c424ec2c",
 				path: "   26d",

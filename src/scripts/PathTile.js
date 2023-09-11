@@ -10,7 +10,7 @@ class PathTile extends Tile {
 	}
 
 	draw() {
-		if (this.type > -1) {
+		if (this.type > -1 && this.y > 1) {
 			if (!this.type) {
 				this.drawRoad(0);
 			}
