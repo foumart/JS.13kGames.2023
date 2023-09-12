@@ -46,7 +46,7 @@ class Unit extends Tile {
 		this.H = 20;
 		this.W = 14;
 		this.offsetX = 0.07;
-		this.offsetY = this.y < 2 ? -1 : -0.7;
+		this.offsetY = this.y < 2 || !state ? -1 : -0.7;
 	}
 
 	moveUp(speed = 8) {

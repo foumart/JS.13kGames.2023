@@ -69,7 +69,7 @@ class PixelArt {
 		// 16x16, roads
 		let road1 = PixelArt.dataTiles.shift();
 		let road2 = PixelArt.dataTiles.shift();
-		PixelArt.spritesRoad = [//drawSprite(spriteData, width, height, palette, addShadow = 0, flipped = false, rotated = 0) {
+		PixelArt.spritesRoad = [
 			PixelArt.drawSprite(road1, 16, 16, PixelArt.paletteRoad),
 			PixelArt.drawSprite(road2, 16, 16, PixelArt.paletteRoad),
 			PixelArt.drawSprite(road2, 16, 16, PixelArt.paletteRoad, 0, 0, 1),
@@ -77,7 +77,7 @@ class PixelArt {
 			PixelArt.drawSprite(road2, 16, 16, PixelArt.paletteRoad, 0, 0, 3),
 		];
 
-		// 16x16, 4 arrays with 0,90,180,270 degrees rotated sprites => 12 sprites total inside: 3 sprites * 4 animated frames each.
+		// 16x16, 4 arrays with 0,90,180,270 degrees rotated water sprites => 12 sprites total - inside: 3 sprites * 4 animated frames each.
 		PixelArt.spritesWater = [
 			PixelArt.drawSprites(PixelArt.dataTiles, PixelArt.paletteWater),
 			PixelArt.drawSprites(PixelArt.dataTiles, PixelArt.paletteWater, 16, 16, false, 1),

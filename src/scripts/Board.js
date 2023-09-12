@@ -337,7 +337,18 @@ class Board {
 			if (unit.highlighted) {
 				if (unit.type == 3) {// Carve!
 					// TODO: [carving] sound
+					rock += 2;
+					mana -= 1;
 					unit.convertToMoai();
+					this.placeRoad(unit.x, unit.y);
+					unit.highlighted = 1;
+					hilight = unit;
+					action = unit.type;
+				} else {// Attach and prepare to pull a statue
+					// TODO: [attach] sound
+					unit.highlighted = 0;
+					unit.attached = 1;
+					action = 6;
 				}
 			} else if (unit.attached) {// Swap with Moai
 				// TODO: [swap / move] sound
@@ -347,13 +358,9 @@ class Board {
 				this.unitsData[unit.y][unit.x] = 5;
 			} else
 			if (unit.type == 3 || unit.type == 5) {
-				if (unit.type == 3) {
-					unit.highlighted = 1;
-				} else {
-					unit.attached = 1;
-				}
+				unit.highlighted = 1;
 				hilight = unit;
-				action = 2 + unit.type;
+				action = unit.type;
 			}
 			updateInGameUI();
 		} else if (player.offsetY == -0.5) {
