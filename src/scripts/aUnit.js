@@ -40,6 +40,7 @@ class Unit extends Tile {
 		}
 	}
 
+	// Changes a Rock (Mountain) into Moai statue
 	convertToMoai() {
 		this.highlighted = false;
 		this.type = 5;
@@ -50,58 +51,41 @@ class Unit extends Tile {
 		this.baseY = this.offsetY = this.y < 2 || !state ? -1.3 : -0.7;
 	}
 
+	// Called when a Moai is being moved - depends on prevMove
 	move(speed = 8, alter = -1) {
 		if (prevMove == 1) {
-			this.moveUp(speed, alter);
+			this.moveTo(0, -1, speed, alter);
 		} else if (prevMove == 2) {
-			this.moveRight(speed, alter);
+			this.moveTo(1, 0, speed, alter);
 		} else if (prevMove == 3) {
-			this.moveDown(speed, alter);
+			this.moveTo(0, 1, speed, alter);
 		} else if (prevMove == 4) {
-			this.moveLeft(speed, alter);
+			this.moveTo(-1, 0, speed, alter);
 		}
 	}
 
-	moveUp(speed = 8, alter = -1) {
+	// Moves the unit in an adjacent tile
+	moveTo(x, y, speed = 8, alter = -1) {
+		if (hilight) {
+			SoundFX.p(1, 99, -9, 9);// remove hilight sound
+		} else {
+			SoundFX.p(1, 60, -2, 5);// move step sound
+			SoundFX.p(1, 50, -1, 5, 80);
+		}
+
 		if (alter > -1) {
 			board.unitsData[this.y][this.x] = 0;
-			board.unitsData[this.y-1][this.x] = alter;
+			board.unitsData[this.y + y][this.x + x] = alter;
 		}
-		this.y --;
-		this.offsetY = this.baseY + 1;
-		TweenFX.to(this, speed, {offsetY: this.type == 5 && this.y < 2 ? -1.2 : this.baseY}, 2);
-	}
-	
-	moveDown(speed = 8, alter = -1) {
-		if (alter > -1) {
-			board.unitsData[this.y][this.x] = 0;
-			board.unitsData[this.y+1][this.x] = alter;
-		}
-		this.y ++;
-		this.offsetY = this.baseY - 1;
-		TweenFX.to(this, speed, {offsetY: this.baseY}, 2);
-	}
-	
-	moveLeft(speed = 8, alter = -1) {
-		if (alter > -1) {
-			board.unitsData[this.y][this.x] = 0;
-			board.unitsData[this.y][this.x-1] = alter;
-		}
-		this.x --;
-		this.offsetX = this.baseX + 1;
-		TweenFX.to(this, speed, {offsetX: this.baseX}, 2);
-	}
-	
-	moveRight(speed = 8, alter = -1) {
-		if (alter > -1) {
-			board.unitsData[this.y][this.x] = 0;
-			board.unitsData[this.y][this.x+1] = alter;
-		}
-		this.x ++;
-		this.offsetX = this.baseX - 1;
-		TweenFX.to(this, speed, {offsetX: this.baseX}, 2);
+
+		this.x += x;
+		this.y += y;
+		if (x) this.offsetX = this.baseX - x;
+		if (y) this.offsetY = this.baseY - y;
+		TweenFX.to(this, speed, {offsetY: this.type == 5 && this.y < 2 ? -1.2 : this.baseY, offsetX: this.baseX});
 	}
 
+	// Infinite looping function for character idle animation
 	animate() {
 		if (this.animated) {
 			clearTimeout(this.timeout);

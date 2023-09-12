@@ -290,29 +290,59 @@ class Board {
 		}
 	}
 
+	// Gets the proper direction of movement when corner-pulling a Moai
 	definePrevMove() {
 		prevMove = player.y < attach.y ? 1 : player.x > attach.x ? 2 : player.y > attach.y ? 3 : player.x < attach.x ? 4 : 0;
 		return prevMove;
 	}
 
-	// Perform action (chop, pave, carve, etc.)
+	// Called by direct user input (keyboard arrow keys or mouse click on direction buttons)
+	act(x, y) {
+		if (!this.isPassable(player.x + x, player.y + y)) {
+			this.actionStuck(x, y);
+		} else if (player.offsetX == player.baseX && player.offsetY == player.baseY) {
+			if (attach) {
+				if (this.definePrevMove()) {
+					attach.move(16, 5);
+					if (predictRock && this.path[attach.y][attach.x] == -1) {
+						this.placeRoad(attach.x, attach.y);
+						rock -= predictRock;
+						wood -= 1;
+						mana -= 1;
+					}
+				}
+			}
+
+			player.moveTo(x, y);
+
+			if (!attach) this.removeHilight();
+
+			updateInGameUI();
+		}
+	}
+
+	// Called by direct user input - Perform action (chop, pave, carve, etc.)
 	doAction() {
-		if (action == 1) {
-			if (rock < predictRock || wood < 1) {
-				// TODO: [button disabled] sound
+		if (action == 1) {// Pave road
+			if (rock < predictRock || wood < 1 || board.pathData[player.y][player.x] > -1) {
+				SoundFX.p(1, 50, -1, 9);// disabled sound
 			} else {
-				SoundFX.b(2);
+				SoundFX.c(2, 8);// pave sound
+				SoundFX.p(1, 120, -9, 9);
+				SoundFX.p(2, 99, -8, 40, 40, 1);
+
 				this.placeRoad(player.x, player.y);
 				rock -= predictRock;
 				wood -= 1;
 			}
-		} else if (action == 2) {
+		} else if (action == 2) {// Chop tree
 			let unit = this.getUnit(player.x, player.y);
 
 			if (unit > -1) {
 				if (mana < 2) {
-					// TODO: [button disabled] sound
+					SoundFX.p(1, 50, -1, 9);// disabled sound
 				} else {
+					SoundFX.c(2, 16);// chop sound
 					unit = this.units.splice(unit, 1)[0];
 					this.unitsData[player.y][player.x] = 0;
 					wood += (4-unit.type);
@@ -320,16 +350,18 @@ class Board {
 				}
 			}
 		} else if (action == 5) {// Attach (Move)
+
 			this.actionAttach(hilight);
 		} else if (action == 6) {// Stop
-			this.stopMoving();//attach.highlighted = 1;
+			this.stopMoving();
 		}
 
 		updateInGameUI();
 	}
 
 	actionAttach(unit) {
-		// TODO: [attach] sound
+		SoundFX.c(2, 9);// attach sound
+		SoundFX.p(1, 99, -22, 26);
 		unit.highlighted = 0;
 		unit.attached = 1;
 		attach = unit;
@@ -341,8 +373,8 @@ class Board {
 		if (unit && state > 0) {
 			if (unit.highlighted) {
 				if (unit.type == 3) {// Carve!
-					// TODO: [carving] sound
-					SoundFX.b(0);
+					SoundFX.c(3); // carve sound
+					SoundFX.p(2, 200, -9, 60, 60);
 					rock += 2;
 					mana -= 1;
 					unit.convertToMoai();
@@ -356,17 +388,17 @@ class Board {
 			} else if (unit.attached) {// Swap with Moai
 				// TODO: [swap / move] sound
 				if (y == -1) {
-					player.moveUp(16);
-					unit.moveDown(16);
+					player.moveTo(0, -1, 16);
+					unit.moveTo(0, 1, 16);
 				} else if (y == 1) {
-					player.moveDown(16);
-					unit.moveUp(16);
+					player.moveTo(0, 1, 16);
+					unit.moveTo(0, -1, 16);
 				} else if (x == -1) {
-					player.moveLeft(16);
-					unit.moveRight(16);
+					player.moveTo(-1, 0, 16);
+					unit.moveTo(1, 0, 16);
 				} else if (x == 1) {
-					player.moveRight(16);
-					unit.moveLeft(16);
+					player.moveTo(1, 0, 16);
+					unit.moveTo(-1, 0, 16);
 				}
 				
 				this.unitsData[player.y][player.x] = 0;
@@ -376,6 +408,8 @@ class Board {
 				wood -= 1;
 				mana -= 1;
 			} else if (unit.type == 3 || unit.type == 5) {
+				// hilight sound
+				SoundFX.c(2, 8);
 				unit.highlighted = 1;
 				hilight = unit;
 				action = unit.type;
@@ -384,109 +418,29 @@ class Board {
 		} else {
 			const ahu = this.field[player.y + y][player.x + x];
 			if (ahu.type == 1 && attach) {
-				player.moveUp();
-				attach.moveUp(8, 5);
+				player.moveTo(0, -1);
+				attach.moveTo(0, -1, 8, 5);
 				this.placeRoad(attach.x, attach.y);
 				rock -= predictRock;
 				wood -= 1;
 				mana -= 1; 
 				setTimeout(() => {
 					attach.attached = 0;
-					player.moveDown();
-					attach.moveUp(16, 5);
+					player.moveTo(0, 1);
+					attach.moveTo(0, -1, 16, 5);
 					this.stopMoving();
+
 					// TODO: reduce number of empty ahu's, level complete
 				}, 133);
 			}
 		}
 	}
-	
-	actionUp() {
-		if (!this.isPassable(player.x, player.y - 1)) {
-			this.actionStuck(0, -1);
-		} else if (player.offsetY == -0.5) {
-			if (attach) {
-				if (this.definePrevMove()) {
-					attach.move(16, 5);
-					this.placeRoad(attach.x, attach.y);
-					rock -= predictRock;
-					wood -= 1;
-					mana -= 1;
-				}
-			} else {
-				this.removeHilight();
-			}
-
-			player.moveUp();
-			updateInGameUI();
-		}
-	}
-	
-	actionDown() {
-		if (!this.isPassable(player.x, player.y + 1)) {
-			this.actionStuck(0, 1);
-		} else if (player.offsetY == -0.5) {
-			if (attach) {
-				if (this.definePrevMove()) {
-					attach.move(16, 5);
-					this.placeRoad(attach.x, attach.y);
-					rock -= predictRock;
-					wood -= 1;
-					mana -= 1;
-				}
-			} else {
-				this.removeHilight();
-			}
-
-			player.moveDown();
-			updateInGameUI();
-		}
-	}
-	
-	actionLeft() {
-		if (!this.isPassable(player.x - 1, player.y)) {
-			this.actionStuck(-1, 0);
-		} else if (!player.offsetX) {
-			if (attach) {
-				if (this.definePrevMove()) {
-					attach.move(16, 5);
-					this.placeRoad(attach.x, attach.y);
-					rock -= predictRock;
-					wood -= 1;
-					mana -= 1;
-				}
-			} else {
-				this.removeHilight();
-			}
-
-			player.moveLeft();
-			updateInGameUI();
-		}
-	}
-	
-	actionRight() {
-		if (!this.isPassable(player.x + 1, player.y)) {
-			this.actionStuck(1, 0);
-		} else if (!player.offsetX) {
-			if (attach) {
-				if (this.definePrevMove()) {
-					attach.move(16, 5);
-					this.placeRoad(attach.x, attach.y);
-					rock -= predictRock;
-					wood -= 1;
-					mana -= 1;
-				}
-			} else {
-				this.removeHilight();
-			}
-
-			player.moveRight();
-			updateInGameUI();
-		}
-	}
 
 	stopMoving() {
 		if (attach) {
+			// deattach sound
+			//SoundFX.c(2, 8);
+			SoundFX.p(1, 99, -9, 9);// remove hilight sound
 			attach.attached = 0;
 			//attach.highlighted = 1;
 			hilight = attach;
@@ -498,6 +452,7 @@ class Board {
 	removeHilight() {
 		if (hilight) {
 			hilight.highlighted = 0;
+			hilight = 0;
 			action = 0;
 		}
 	}

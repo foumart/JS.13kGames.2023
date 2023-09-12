@@ -1,4 +1,3 @@
-// SoundFX, sound effects
 var SoundFX = (function() {
 	var audioContext;
 	var oscTypes = ["sawtooth", "square", "triangle", "sine"];
@@ -50,29 +49,58 @@ var SoundFX = (function() {
 			console.log("[Warning] AudioContext not found",e);
 		}
 	}}
-	
-	// stage starting sound, w:length
-	d.d = function(w,d) {
-		playSound(90, 9, 10+w*10, 1, d||0, 0.05);
-		playSound(30, 3, 20+w*10, 1, d||0, 0.1);
-		playSound(90, 5, 20+w*10, 2, d||0, 0.2)
-	}
-	
-	// 0:bunny die, 1-4:bunny jump
-	d.b = function(w) {
-		playSound(220, -9 * (w*w||1), 40/w|0||1, 2, w*60, .2 - (w?.14+w/80:0));
-		playSound(90*(w||1), -9, 9, 1, w*60, .2 - (w?.14+w/80:0));
+
+	// level complete sounds
+	d.c = function(w, l, d) {
+		playSound(300-90*w*w, 9*w, (l||12)*w, 2-(w/2|0), (d||0)+(w-1)*(l/2||8), .5-w*.1);
 	}
 
-	// level complete or super bunny jump
-	d.c = function(w,l,d) {
-		playSound(300-90*w*w, 9*w, (l||8)*w, 2-(w/2|0), (d||0)+(w-1)*(l/2||8), .1-w*.02);
-	}
-	
 	// custom //_type, _freq, _incr, _length, _delay, _vol
-	d.p = function(w,f,i,l,d,v){
-		playSound(f||120, i||10, l||50, w||0, d, v||0.1);
+	d.p = function(w, f, i, l, d, v){
+		playSound(f||120, i||10, l||50, w||0, d, v||0.5);
 	}
 	
 	return d;	
 })();
+
+
+
+// sounds taken from super bunny:
+//SoundFX.b(0);// bruh
+//SoundFX.b(1);// tiuu (heavy)
+//SoundFX.b(3);// iu (pitched)
+//SoundFX.b(4);// iu (more pitched)
+
+//SoundFX.c(2);// pui
+//SoundFX.c(3);// piuu
+//SoundFX.c(4);// piiuuu (high pitch)
+
+//SoundFX.d(6,90)// next level
+//SoundFX.d(0)// buim
+
+//SoundFX.p(2, 200, -10);//bioui (distant)
+//SoundFX.d(9,90)// next level 2
+
+//SoundFX.d(2,90)// tuuiii
+//SoundFX.c(2,9);//tui
+
+//SoundFX.c(4);// piiuuu (very high pich /jump)
+//SoundFX.p(1, 90, -20, 20);// ui short
+//SoundFX.p(1, 9, 40, 20);//tui (take sound?)
+
+// multitone tuuii (achievement?)
+//SoundFX.p(1, 50, 10, 40);
+//SoundFX.p(1, 90, 8, 35, 160, .05);
+//SoundFX.p(0, 90, 20, 30, 320, .06);
+
+// multitone effect
+//SoundFX.p(0, -900, 45, 50, 0, .04);
+//SoundFX.p(1, -200, 15, 50);
+//SoundFX.p(2, 0, 9, 40, 250);
+//SoundFX.p(1, 20, 20, 30, 300);
+
+// multitone effect teleport/magic ?
+//SoundFX.c(1, 20, 900)
+//SoundFX.c(2, 20, 900)
+//SoundFX.c(3, 20, 900)
+//SoundFX.c(4, 20, 900)

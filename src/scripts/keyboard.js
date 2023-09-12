@@ -10,13 +10,13 @@ function onKeyDown(event) {//console.log(event.keyCode)
 		if (state > 0) board.doAction();
 		else switchState();
 	} else if (event.keyCode == 40) { // down
-		board.actionDown();
+		board.act(0, 1);
 	} else if (event.keyCode == 38) { // up
-		board.actionUp();
+		board.act(0, -1);
 	} else if (event.keyCode == 37) { // left
-		board.actionLeft();
+		board.act(-1, 0);
 	} else if (event.keyCode == 39) { // right
-		board.actionRight();
+		board.act(1, 0);
 	}
 }
 
