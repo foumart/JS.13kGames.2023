@@ -1,8 +1,7 @@
-
-// TODO:
 //actionButton = generateUIButton(inDiv, '&#x1f528', board.doAction.bind(board));// 🔨: &#x1f528, 🪓:&#x1FA93,  ⛏️⛏: &#x26cf (&#9935)
 
 function updateInGameUI() {
+	if (!state) return;
 	actionButton.style.opacity = 1;
 	actionButton.style.pointerEvents = "all";
 
@@ -11,37 +10,36 @@ function updateInGameUI() {
 
 	if (action == 6) {
 		// Stop Moai walking
-		html = `<div style="width:100%;font-size:${70*scale}px;margin-top:${99*scale}px">Stop</div>`;
-		html += `<div style="width:100%;font-size:${60*scale}px;margin-top:${162*scale}px">Moai</div>`;
-		html += `<div style="width:100%;font-size:${35*scale}px;margin-top:${215*scale}px">walking</div>`;
-		actionButton.innerHTML = html + `<div class="emoticon">&#x2716</div>`;
+		html = `<div style="width:100%;font-size:${99*scale}px;margin-top:${125*scale}px">Stop</div>`;
+		html += `<div style="width:100%;font-size:${50*scale}px;margin-top:${210*scale}px">moving</div>`;
+		actionButton.innerHTML = html + `<div class="button icon">&#x2716</div>`;
 	} else 
 	if (action == 5) {
 		// Walk the Moai
-		html = `<div style="width:100%;font-size:${99*scale}px;margin-top:${(predictRock?99:128)*scale}px">Walk</div>`;
+		html = `<div style="width:100%;font-size:${99*scale}px;margin-top:${(predictRock?99:128)*scale}px">Move</div>`;
 		html += `<div style="width:100%;font-size:${45*scale}px;margin-top:${(predictRock?180:225)*scale}px">-1 Mana</div>`;
 		if (predictRock) {
 			html += `<div style="width:100%;font-size:${40*scale}px;margin-top:${225*scale}px">-${predictRock*4} Stone</div>`;
 			html += `<div style="width:100%;font-size:${35*scale}px;margin-top:${268*scale}px">-1 Wood</div>`;
 		}
-		actionButton.innerHTML = html + `<div class="emoticon shake">&#x1f5ff</div>`;
+		actionButton.innerHTML = html + `<div class="button shake">&#x1f5ff</div>`;
 	} else 
 	if (action == 3) {
 		// Carve a Moai statue
-		html = `<div style="width:100%;font-size:${99*scale}px;margin-top:${99*scale}px">Carve</div>`;
-		html += `<div style="width:100%;font-size:${45*scale}px;margin-top:${185*scale}px">+8 Stone</div>`;
-		html += `<div style="width:100%;font-size:${40*scale}px;margin-top:${235*scale}px">-1 Mana</div>`;
-		actionButton.innerHTML = html + `<div class="emoticon">&#x1f528</div>`;
+		html = `<div style="width:100%;font-size:${99*scale}px;margin-top:${110*scale}px">Carve</div>`;
+		html += `<div style="width:100%;font-size:${45*scale}px;margin-top:${195*scale}px">+8 Stone</div>`;
+		html += `<div style="width:100%;font-size:${40*scale}px;margin-top:${245*scale}px">-1 Mana</div>`;
+		actionButton.innerHTML = html + `<div class="button">&#x1f528</div>`;
 	} else 
 
 	if (!board.mapData[player.y][player.x] && !board.unitsData[player.y][player.x] && board.pathData[player.y][player.x] == -1) {
 		// Pave
 		action = 1;
 		board.placeRoad(player.x, player.y, 0, 1);// Not placing a road here - just getting prediction to update predictRock
-		html = `<div style="width:100%;font-size:${99*scale}px;margin-top:${99*scale}px">Pave</div>`;
-		html += `<div style="width:100%;font-size:${45*scale}px;margin-top:${185*scale}px">-${predictRock*4} Stone</div>`;
-		html += `<div style="width:100%;font-size:${40*scale}px;margin-top:${235*scale}px">-1 Wood</div>`;
-		actionButton.innerHTML = html + `<div class="emoticon">&#9935</div>`;
+		html = `<div style="width:100%;font-size:${99*scale}px;margin-top:${110*scale}px">Pave</div>`;
+		html += `<div style="width:100%;font-size:${45*scale}px;margin-top:${195*scale}px">-${predictRock*4} Stone</div>`;
+		html += `<div style="width:100%;font-size:${40*scale}px;margin-top:${245*scale}px">-1 Wood</div>`;
+		actionButton.innerHTML = html + `<div class="button">&#9935</div>`;
 		// Hilight in case mana is low and disable the action button
 		if (rock < predictRock || wood < 1) {
 			disableActionButton();
@@ -51,10 +49,10 @@ function updateInGameUI() {
 		// Chop
 		action = 2;
 		const treeType = board.units[board.getUnit(player.x, player.y)].type;
-		html = `<div style="width:100%;font-size:${99*scale}px;margin-top:${99*scale}px">Chop</div>`;
-		html += `<div style="width:100%;font-size:${45*scale}px;margin-top:${185*scale}px">+${4-treeType} Wood</div>`;
-		html += `<div style="width:100%;font-size:${40*scale}px;margin-top:${235*scale}px">-1 Mana</div>`;
-		actionButton.innerHTML = html + `<div class="emoticon">&#x1fa93</div>`;
+		html = `<div style="width:100%;font-size:${99*scale}px;margin-top:${110*scale}px">Chop</div>`;
+		html += `<div style="width:100%;font-size:${45*scale}px;margin-top:${195*scale}px">+${4-treeType} Wood</div>`;
+		html += `<div style="width:100%;font-size:${40*scale}px;margin-top:${245*scale}px">-1 Mana</div>`;
+		actionButton.innerHTML = html + `<div class="button">&#x1fa93</div>`;
 		// Hilight in case mana is low and disable the action button
 		if (mana < 2) {
 			disableActionButton();

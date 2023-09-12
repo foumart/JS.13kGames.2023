@@ -3,8 +3,8 @@ class Unit extends Tile {
 	constructor(x, y, type) {
 		super(x, y, type);
 
-		this.offsetX = 0;
-		this.offsetY = 0;
+		this.baseX = this.offsetX = 0;
+		this.baseY = this.offsetY = 0;
 		this.W = 16;
 		this.H = 16;
 		this.S = 16;
@@ -12,16 +12,16 @@ class Unit extends Tile {
 		switch (type) {
 			case 1: // palm (level data == 1)
 				this.S = 14;
-				this.offsetX = -0.075;
-				this.offsetY = -0.55;
+				this.baseX = this.offsetX = -0.075;
+				this.baseY = this.offsetY = -0.55;
 				break;
 			case 2: // tree (level data == 2)
-				this.offsetX = -0.1;
-				this.offsetY = -0.5;
+				this.baseX = this.offsetX = -0.1;
+				this.baseY = this.offsetY = -0.5;
 				break;
 			case 3: // rock (level data == 3)
-				this.offsetX = -0.075;
-				this.offsetY = -0.4;
+				this.baseX = this.offsetX = -0.075;
+				this.baseY = this.offsetY = -0.4;
 				this.S = 14;
 				break;
 			case 5: // moai
@@ -31,7 +31,7 @@ class Unit extends Tile {
 				break;
 			case 6: // player
 				this.H = 20;
-				this.offsetY = -0.5;
+				this.baseY = this.offsetY = -0.5;
 				this.animated = true;
 				this.animate();
 				break;
@@ -45,32 +45,61 @@ class Unit extends Tile {
 		this.type = 5;
 		this.H = 20;
 		this.W = 14;
-		this.offsetX = 0.07;
-		this.offsetY = this.y < 2 || !state ? -1 : -0.7;
+		this.S = 14;
+		this.baseX = this.offsetX = 0;
+		this.baseY = this.offsetY = this.y < 2 || !state ? -1.3 : -0.7;
 	}
 
-	moveUp(speed = 8) {
+	move(speed = 8, alter = -1) {
+		if (prevMove == 1) {
+			this.moveUp(speed, alter);
+		} else if (prevMove == 2) {
+			this.moveRight(speed, alter);
+		} else if (prevMove == 3) {
+			this.moveDown(speed, alter);
+		} else if (prevMove == 4) {
+			this.moveLeft(speed, alter);
+		}
+	}
+
+	moveUp(speed = 8, alter = -1) {
+		if (alter > -1) {
+			board.unitsData[this.y][this.x] = 0;
+			board.unitsData[this.y-1][this.x] = alter;
+		}
 		this.y --;
-		this.offsetY = 0.5;
-		TweenFX.to(this, speed, {offsetY: -0.5}, 2);
+		this.offsetY = this.baseY + 1;
+		TweenFX.to(this, speed, {offsetY: this.type == 5 && this.y < 2 ? -1.2 : this.baseY}, 2);
 	}
 	
-	moveDown(speed = 8) {
+	moveDown(speed = 8, alter = -1) {
+		if (alter > -1) {
+			board.unitsData[this.y][this.x] = 0;
+			board.unitsData[this.y+1][this.x] = alter;
+		}
 		this.y ++;
-		this.offsetY = -1.5;
-		TweenFX.to(this, speed, {offsetY: -0.5}, 2);
+		this.offsetY = this.baseY - 1;
+		TweenFX.to(this, speed, {offsetY: this.baseY}, 2);
 	}
 	
-	moveLeft(speed = 8) {
+	moveLeft(speed = 8, alter = -1) {
+		if (alter > -1) {
+			board.unitsData[this.y][this.x] = 0;
+			board.unitsData[this.y][this.x-1] = alter;
+		}
 		this.x --;
-		this.offsetX = 1;
-		TweenFX.to(this, speed, {offsetX: 0}, 2);
+		this.offsetX = this.baseX + 1;
+		TweenFX.to(this, speed, {offsetX: this.baseX}, 2);
 	}
 	
-	moveRight(speed = 8) {
+	moveRight(speed = 8, alter = -1) {
+		if (alter > -1) {
+			board.unitsData[this.y][this.x] = 0;
+			board.unitsData[this.y][this.x+1] = alter;
+		}
 		this.x ++;
-		this.offsetX = -1;
-		TweenFX.to(this, speed, {offsetX: 0}, 2);
+		this.offsetX = this.baseX - 1;
+		TweenFX.to(this, speed, {offsetX: this.baseX}, 2);
 	}
 
 	animate() {
@@ -82,7 +111,7 @@ class Unit extends Tile {
 				this.frame ++;
 				if (this.frame > 2) this.frame = 0;
 				this.animate();
-			}, blink ? 99 : 600 + Math.random() * 600);
+			}, blink ? 200 : 600 + Math.random() * 600);
 		}
 	}
 
@@ -113,7 +142,7 @@ class Unit extends Tile {
 		if (this.highlighted || this.attached) {// TODO: make a proper selection
 			this.context.beginPath(); 
 			this.context.strokeStyle = this.attached ? '#0f0' : '#fff';
-			this.context.lineWidth = 9;
+			this.context.lineWidth = width/99;
 			this.context.strokeRect(
 				this.getOffsetX() + (this.offsetX + this.x) * this.elementSize * this.scale,
 				this.getOffsetY() + (this.offsetY + (this.y -1) + this.tilt) * this.elementSize * this.scale * this.tilt,

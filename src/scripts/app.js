@@ -16,7 +16,7 @@ function isTouchDevice() {
 }
 
 let state = 0;// -1: zoomed out Earth with animated logo, 0: zoomed in Isle view Title screen, 1-2 changes when starting a level
-let stage = 1;// 0 - title screen, > 1 - directly load any level (state should be 0)
+let stage = 0;// 0 - title screen, > 1 - directly load any level (state should be 0)
 
 // global sizes
 let width;
@@ -34,8 +34,17 @@ let action;
 
 // ui stuff
 let earth, stars;
-let controls, upButton, leftButton, rightButton, downButton, centerButton, actionButton;
-let title, playButton, fullscreenButton, soundButton, uiInfo, hilight;
+let controls, upButton, leftButton, rightButton, downButton, actionButton;
+let title, playButton, fullscreenButton, soundButton, uiInfo;
+
+// current highlighted unit
+let hilight;
+
+// current attached moai prepared to move or already moved
+let attach;
+
+// direction of moai pull accomodating corners
+let prevMove;
 
 // resources
 let wood;
@@ -57,6 +66,8 @@ function initializeGame() {
 	//document.addEventListener("keyup", onKeyUp);
 
 	PixelArt.init();
+
+	if(!SoundFX.initialized) SoundFX.start();// start soundFX
 
 	createUI();
 	resize();
@@ -237,7 +248,7 @@ function resize(e) {
 		e = 99 + height/8;
 		inDiv.style.minWidth = 'unset';
 		inDiv.style.maxHeight = (e < (width - height) / 2 ? (width - height) / 2 : e) + 'px';
-		inDiv.style.minHeight = (200 + height/9) + 'px';
+		inDiv.style.minHeight = (99 + height/5) + 'px';
 		inDiv.style.height = '100%';
 		inDiv.style.width = width + 'px';
 
@@ -264,7 +275,7 @@ function resize(e) {
 
 		if (portrait) {
 			controls.style = "bottom:auto;width:45%";
-			actionButton.style.maxWidth = "250px";
+			actionButton.style.maxWidth = `${50 + width/3}px`;
 			actionButton.style.height = "100%";
 			actionButton.style.lineHeight = (50 + height/9) + 'px';
 		} else {

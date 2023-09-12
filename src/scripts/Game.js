@@ -24,12 +24,27 @@ class Game {
 				clearInterval(this.loop);
 				this.destroy();
 				startGame(state > 2);
+
+				// attempt transition
+				/*TweenFX.to(tween, 9, {board: 2}, 1, () => {
+					gameCanvas.style.transform = `scale(${tween.board})`;
+				}, () => {
+					this.destroy();
+					startGame(state > 2);
+					tween.board = 0.75;
+					gameCanvas.style.transform = `scale(0.75)`;
+					TweenFX.to(tween, 9, {board: 1}, 2, () => {
+						gameCanvas.style.transform = `scale(${tween.board})`;
+					}, () => {
+						
+					});
+				});*/
 			}
 		}, 1000 / 60);
 	}
 
 	resize() {
-		board.resize();
+		//board.resize();
 		board.draw();
 	}
 

@@ -39,7 +39,7 @@ function generateTitle() {
 		[5.5,2,-2,12.5,,,1,,,,,1],
 		[5.5,1.5,-6.5,9.5,,1,,,,,,1],
 		[4,1.5,-5.5,11,,1,1],
-		// Y
+		// Y - TODO: update
 		[4.5,4,,9.5,,,,2],
 		[4.5,4,-1,9.5,,1,2],
 		[5,1.75,-8,12.75,,,1,1,1],
@@ -60,7 +60,6 @@ function drawTitle(titleArr, title, baseLeft, baseTop, scale, className) {
 
 	for(var j = 0; j < titleArr.length; j++) {
 		segment = titleArr[j];
-		//if (pieceWidth < (segment[0]||0)+(segment[2]||0))
 		pieceWidth = (segment[0]||0)+(segment[2]||0);
 		piece = document.createElement("div");
 		title.appendChild(piece).className = portrait ? "widepiece" : "thinpiece";

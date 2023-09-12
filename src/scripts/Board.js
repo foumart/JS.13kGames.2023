@@ -290,21 +290,24 @@ class Board {
 		}
 	}
 
+	definePrevMove() {
+		prevMove = player.y < attach.y ? 1 : player.x > attach.x ? 2 : player.y > attach.y ? 3 : player.x < attach.x ? 4 : 0;
+		return prevMove;
+	}
+
 	// Perform action (chop, pave, carve, etc.)
 	doAction() {
-		console.log(action, this.mapData[player.y][player.x], this.unitsData[player.y][player.x], this.pathData[player.y][player.x]);
-		let unit;
-
 		if (action == 1) {
 			if (rock < predictRock || wood < 1) {
 				// TODO: [button disabled] sound
 			} else {
+				SoundFX.b(2);
 				this.placeRoad(player.x, player.y);
 				rock -= predictRock;
 				wood -= 1;
 			}
 		} else if (action == 2) {
-			unit = this.getUnit(player.x, player.y);
+			let unit = this.getUnit(player.x, player.y);
 
 			if (unit > -1) {
 				if (mana < 2) {
@@ -316,27 +319,30 @@ class Board {
 					mana -= 1;
 				}
 			}
+		} else if (action == 5) {// Attach (Move)
+			this.actionAttach(hilight);
+		} else if (action == 6) {// Stop
+			this.stopMoving();//attach.highlighted = 1;
 		}
 
 		updateInGameUI();
 	}
-	
-	actionUp() {
-		if (!this.isPassable(player.x, player.y - 1)) {
-			console.log(this.mapData[player.y - 1][player.x], this.unitsData[player.y - 1][player.x], this.pathData[player.y - 1][player.x]);
-		} else if (player.offsetY == -0.5) {
-			this.removeHilight();
-			player.moveUp();
-			updateInGameUI();
-		}
+
+	actionAttach(unit) {
+		// TODO: [attach] sound
+		unit.highlighted = 0;
+		unit.attached = 1;
+		attach = unit;
+		action = 6;
 	}
-	
-	actionDown() {
-		if (!this.isPassable(player.x, player.y + 1)) {
-			const unit = this.units[this.getUnit(player.x, player.y + 1)];
+
+	actionStuck(x, y) {
+		const unit = this.units[this.getUnit(player.x + x, player.y + y)];
+		if (unit && state > 0) {
 			if (unit.highlighted) {
 				if (unit.type == 3) {// Carve!
 					// TODO: [carving] sound
+					SoundFX.b(0);
 					rock += 2;
 					mana -= 1;
 					unit.convertToMoai();
@@ -345,26 +351,93 @@ class Board {
 					hilight = unit;
 					action = unit.type;
 				} else {// Attach and prepare to pull a statue
-					// TODO: [attach] sound
-					unit.highlighted = 0;
-					unit.attached = 1;
-					action = 6;
+					this.actionAttach(unit);
 				}
 			} else if (unit.attached) {// Swap with Moai
 				// TODO: [swap / move] sound
-				player.moveDown(20);
-				unit.moveUp(20);
+				if (y == -1) {
+					player.moveUp(16);
+					unit.moveDown(16);
+				} else if (y == 1) {
+					player.moveDown(16);
+					unit.moveUp(16);
+				} else if (x == -1) {
+					player.moveLeft(16);
+					unit.moveRight(16);
+				} else if (x == 1) {
+					player.moveRight(16);
+					unit.moveLeft(16);
+				}
+				
 				this.unitsData[player.y][player.x] = 0;
 				this.unitsData[unit.y][unit.x] = 5;
-			} else
-			if (unit.type == 3 || unit.type == 5) {
+				this.placeRoad(unit.x, unit.y);
+				rock -= predictRock;
+				wood -= 1;
+				mana -= 1;
+			} else if (unit.type == 3 || unit.type == 5) {
 				unit.highlighted = 1;
 				hilight = unit;
 				action = unit.type;
-			}
+			} else console.log(unit.type);
 			updateInGameUI();
+		} else {
+			const ahu = this.field[player.y + y][player.x + x];
+			if (ahu.type == 1 && attach) {
+				player.moveUp();
+				attach.moveUp(8, 5);
+				this.placeRoad(attach.x, attach.y);
+				rock -= predictRock;
+				wood -= 1;
+				mana -= 1; 
+				setTimeout(() => {
+					attach.attached = 0;
+					player.moveDown();
+					attach.moveUp(16, 5);
+					this.stopMoving();
+					// TODO: reduce number of empty ahu's, level complete
+				}, 133);
+			}
+		}
+	}
+	
+	actionUp() {
+		if (!this.isPassable(player.x, player.y - 1)) {
+			this.actionStuck(0, -1);
 		} else if (player.offsetY == -0.5) {
-			this.removeHilight();
+			if (attach) {
+				if (this.definePrevMove()) {
+					attach.move(16, 5);
+					this.placeRoad(attach.x, attach.y);
+					rock -= predictRock;
+					wood -= 1;
+					mana -= 1;
+				}
+			} else {
+				this.removeHilight();
+			}
+
+			player.moveUp();
+			updateInGameUI();
+		}
+	}
+	
+	actionDown() {
+		if (!this.isPassable(player.x, player.y + 1)) {
+			this.actionStuck(0, 1);
+		} else if (player.offsetY == -0.5) {
+			if (attach) {
+				if (this.definePrevMove()) {
+					attach.move(16, 5);
+					this.placeRoad(attach.x, attach.y);
+					rock -= predictRock;
+					wood -= 1;
+					mana -= 1;
+				}
+			} else {
+				this.removeHilight();
+			}
+
 			player.moveDown();
 			updateInGameUI();
 		}
@@ -372,9 +445,20 @@ class Board {
 	
 	actionLeft() {
 		if (!this.isPassable(player.x - 1, player.y)) {
-	
+			this.actionStuck(-1, 0);
 		} else if (!player.offsetX) {
-			this.removeHilight();
+			if (attach) {
+				if (this.definePrevMove()) {
+					attach.move(16, 5);
+					this.placeRoad(attach.x, attach.y);
+					rock -= predictRock;
+					wood -= 1;
+					mana -= 1;
+				}
+			} else {
+				this.removeHilight();
+			}
+
 			player.moveLeft();
 			updateInGameUI();
 		}
@@ -382,30 +466,49 @@ class Board {
 	
 	actionRight() {
 		if (!this.isPassable(player.x + 1, player.y)) {
-	
+			this.actionStuck(1, 0);
 		} else if (!player.offsetX) {
-			this.removeHilight();
+			if (attach) {
+				if (this.definePrevMove()) {
+					attach.move(16, 5);
+					this.placeRoad(attach.x, attach.y);
+					rock -= predictRock;
+					wood -= 1;
+					mana -= 1;
+				}
+			} else {
+				this.removeHilight();
+			}
+
 			player.moveRight();
 			updateInGameUI();
 		}
 	}
 
+	stopMoving() {
+		if (attach) {
+			attach.attached = 0;
+			//attach.highlighted = 1;
+			hilight = attach;
+			attach = 0;
+			action = 0;
+		}
+	}
+
 	removeHilight() {
 		if (hilight) {
-			hilight.highlighted = false;
-			hilight.attached = false;
+			hilight.highlighted = 0;
 			action = 0;
 		}
 	}
 
 
-
 	// reposition buttons
-	resize() {
-		/*if (this.buttonsArr) for (let i = 0; i < this.buttonsArr.length; i ++) {
+	/*resize() {
+		if (this.buttonsArr) for (let i = 0; i < this.buttonsArr.length; i ++) {
 			this.buttonsArr[i].resize();
-		}*/
-	}
+		}
+	}*/
 
 	// Draw the board
 	draw() {
@@ -427,7 +530,7 @@ class Board {
 		// Draw units from top to bottom inserting the player in the proper depth position
 		let drawn;
 		for (let i = 0; i < this.units.length; i ++) {
-			if (!drawn && player.y < this.units[i].y) {
+			if (!drawn && player.y < this.units[i].y) {// TODO: fix depth - (player.y < 3 && this.units[i].type == 5 ? 1 : 0)) {
 				drawn = true;
 				player.resize();
 			}

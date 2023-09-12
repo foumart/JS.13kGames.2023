@@ -32,22 +32,15 @@ canvas {
 }
 
 .icon {
-	/* width: 6vw; */
-	/* min-width: 60px; */
-	margin: 1vh 1vw;
+	margin: 1vh 2vw;
 	text-align: center;
 	font-weight: 900;
 	filter: drop-shadow(0 .1rem 5px #006);
 }
 
-.emoticon {
-	position: relative;
-	top: -1vh;
-}
-
 .shake {
 	animation: shaking 1s infinite;
-	margin-top: -2vh;
+	top: -4vh;
 }
 
 @keyframes shaking {
@@ -71,7 +64,7 @@ canvas {
 .info {
 	padding: 1vh 0 0 2vw;
 	color: #fff;
-	width: 50%;
+	width: 80%;
 	min-width: 300px;
 	font-weight: 900;
 	filter: drop-shadow(0 .1rem 5px #006);
