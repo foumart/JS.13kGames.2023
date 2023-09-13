@@ -26,6 +26,7 @@ class Unit extends Tile {
 				break;
 			case 5: // moai
 				this.convertToMoai();
+				// alter moai on title screen - make some of them face left or right (OPTIMIZE ~100b)
 				if (!state && (x > 10 || y > 6)) this.frame = 3;
 				if (!state && (x < 3 && y > 6)) this.frame = 9;
 				break;
@@ -69,8 +70,8 @@ class Unit extends Tile {
 	// Moves the unit in an adjacent tile
 	moveTo(x, y, speed = 8, alter = -1) {
 		if (state > 0) {
-			if (hilight) {
-				SoundFX.p(1, 99, -9, 9);// remove hilight sound
+			if (hilight && this != player) {
+				SoundFX.p(1, 99, -9, 9, 135);// remove hilight sound
 			} else {
 				SoundFX.p(1, 60, -2, 5);// move step sound
 				SoundFX.p(1, 50, -1, 5, 80);
@@ -94,8 +95,8 @@ class Unit extends Tile {
 		if (this.animated) {
 			clearTimeout(this.timeout);
 			const blink = Math.random() < .2;
-			this.timeout = setTimeout(() => {
-				if (Math.random() < .6) this.frame = Game.instance.step % 9 == 0 ? 1 : -1;
+			this.timeout = setTimeout(e => {
+				if (Math.random() < .6) this.frame = step % 9 == 0 ? 1 : -1;
 				this.frame ++;
 				if (this.frame > 2) this.frame = 0;
 				this.animate();
@@ -111,32 +112,43 @@ class Unit extends Tile {
 	}
 
 	draw() {
+		let x = this.getOffsetX() + (this.offsetX + this.x) * this.elementSize * this.scale;
+		let y = this.getOffsetY() + (this.offsetY + (this.y -1) + this.tilt) * this.elementSize * this.scale * this.tilt;
+		let w = this.width / this.S * this.W;
+		let h = this.height / this.S * this.H;
+		let o = w/20;
 		this.context.drawImage(
 			this.type == 7
 				? PixelArt.spritesObjects[3]
 				: this.type < 4
 					? PixelArt.spritesObjects[this.type - 1]
 					: this.type == 5
-						? PixelArt.spritesMoai[this.frame + (this.highlighted ? 1 : this.attached ? 2 : 0)]
+						? PixelArt.spritesMoai[this.frame + (this.highlighted ? 1 : this.attached ? 2-((step/80|0)%4==0&&(step/9|0)%3==0?1:0) : 0)]
 						: this.type == 4
 							? PixelArt.spritesObjects[3]
 							: PixelArt.spritesCharacter[this.frame],
-			this.getOffsetX() + (this.offsetX + this.x) * this.elementSize * this.scale,
-			this.getOffsetY() + (this.offsetY + (this.y -1) + this.tilt) * this.elementSize * this.scale * this.tilt,
-			this.width / this.S * this.W,
-			this.height / this.S * this.H
+			x, y, w, h
 		);
 
-		/*if (this.highlighted || this.attached) {// TODO: make a proper selection
+		if (this.highlighted && this.type == 3) {
 			this.context.beginPath(); 
-			this.context.strokeStyle = this.attached ? '#0f0' : '#fff';
+			this.context.strokeStyle = '#fff';
 			this.context.lineWidth = width/99;
-			this.context.strokeRect(
-				this.getOffsetX() + (this.offsetX + this.x) * this.elementSize * this.scale,
-				this.getOffsetY() + (this.offsetY + (this.y -1) + this.tilt) * this.elementSize * this.scale * this.tilt,
-				this.width / this.S * this.W,
-				this.height / this.S * this.H
-			);
-		}*/
+			this.context.moveTo(x-o,y+h-o-o);
+			this.context.lineTo(x+o,y+h);
+			this.context.lineTo(x+w-o-o,y+h);
+			this.context.lineTo(x+w,y+h-o-o);
+			this.context.lineTo(x+w-o,y+h*0.3);
+			this.context.lineTo(x+w*.8,y);
+			this.context.lineTo(x+w*.6,y-o);
+			this.context.lineTo(x+w*.4,y+o);
+			this.context.lineTo(x+w*.2,y+h*.3);
+			this.context.lineTo(x,y+h*.7);
+			this.context.lineTo(x-o,y+h-o);
+			this.context.moveTo(x+w/2,y+h/5);
+			this.context.lineTo(x+w/3,y+h/3);
+			this.context.closePath();
+			this.context.stroke();
+		} 
 	}
 }

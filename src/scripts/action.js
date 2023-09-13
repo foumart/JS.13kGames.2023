@@ -1,6 +1,6 @@
 //actionButton 🔨: &#x1f528, 🪓:&#x1FA93,  ⛏️⛏: &#x26cf (&#9935)
 
-function updateInGameUI() {
+function updateInGameUI(special) {
 	if (!state) return;
 	actionButton.style.opacity = 1;
 	actionButton.style.pointerEvents = "all";
@@ -9,6 +9,15 @@ function updateInGameUI() {
 	let scale = getScale(width, height);
 	let currentPath = board.pathData[player.y][player.x];
 
+	if (special) {
+		html = `<div style="width:100%;font-size:${80*scale}px;margin-top:${120*scale}px">Next</div>`;
+		//html += `<div style="width:100%;font-size:${55*scale}px;margin-top:${195*scale}px">Stone</div>`;
+		//html += `<div style="width:100%;font-size:${40*scale}px;margin-top:${245*scale}px">spent: ${
+			//!currentPath ? 2 : currentPath>0&&currentPath<5 ? 3 : currentPath>6&&currentPath<11 ? 5 : currentPath==15 ? 6 : 4
+		//}</div>`;
+		actionButton.innerHTML = html + `<div class="button" style="top:-2vh">✔️</div>`;
+		//✔️☑️⭐🌟🥔🏅🥇🥈🥉🎖️🏆
+	} else
 	if (action == 6) {
 		// Stop Moai moving
 		html = `<div style="width:100%;font-size:${99*scale}px;margin-top:${125*scale}px">Stop</div>`;
@@ -51,10 +60,10 @@ function updateInGameUI() {
 		html += `<div style="width:100%;font-size:${40*scale}px;margin-top:${245*scale}px">-1 Mana</div>`;
 		actionButton.innerHTML = html + `<div class="button">&#x1fa93</div>`;
 		// Hilight in case mana is low and disable the action button
-		if (mana < 2) {
+		/*if (mana < 2) {
 			disableActionButton();
 			actionButton.children[2].style.color = "#faa";
-		}
+		}*/
 	} else if (currentPath > -1) {
 		predictRock = 0;
 		html = `<div style="width:100%;font-size:${80*scale}px;margin-top:${120*scale}px">Road</div>`;

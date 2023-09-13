@@ -20,7 +20,7 @@ class TweenFX {
 		const duration = _duration;
 		const element = _element;
 
-		const tween = () => {
+		const tween = e => {
 			if (element.killed) {
 				//TweenFX.callbacks.splice(TweenFX.callbacks.indexOf(tween), 1);
 				return;

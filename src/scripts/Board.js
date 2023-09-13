@@ -323,6 +323,10 @@ class Board {
 
 	// Called by direct user input - Perform action (chop, pave, carve, etc.)
 	doAction() {
+		if (action > 7) {// Level Complete proceed
+			//complete = action - 8;
+			switchState(0, 1);
+		} else
 		if (action == 1) {// Pave road
 			if (rock < predictRock || wood < 1 || board.pathData[player.y][player.x] > -1) {
 				SoundFX.p(1, 50, -1, 9);// disabled sound
@@ -371,13 +375,16 @@ class Board {
 		if (unit && state > 0) {
 			if (unit.highlighted) {
 				if (unit.type == 3) {// Carve!
-					SoundFX.c(2, 16, 99); // carve sound
-					SoundFX.p(2, 200, -9, 40);
+					SoundFX.c(2, 16, 160); // carve sound
+					SoundFX.p(1, 200, -9, 60, 40, 0.2);
+					SoundFX.p(1, 9, 40, 20, 30, 0.2);
 					rock += 2;
 					mana -= 1;
 					unit.convertToMoai();
 					this.placeRoad(unit.x, unit.y);
-					//unit.highlighted = 1;
+					// hilight the moai for a short while right after being carved
+					unit.highlighted = 1;
+					setTimeout(e => unit.highlighted = 0, 99);
 					//hilight = unit;
 					//action = unit.type;
 					action = 0;
@@ -417,19 +424,32 @@ class Board {
 		} else {
 			const ahu = this.field[player.y + y][player.x + x];
 			if (ahu.type == 1 && attach) {
+				SoundFX.c(1, 20, 99)
+				SoundFX.c(2, 20, 99)
+				SoundFX.c(3, 20, 99)
+				SoundFX.c(4, 20, 99)
+
 				player.moveTo(0, -1);
 				attach.moveTo(0, -1, 8, 5);
 				this.placeRoad(attach.x, attach.y);
 				rock -= predictRock;
 				wood -= 1;
 				mana -= 1; 
-				setTimeout(() => {
+				setTimeout(e => {
+					action = 0;
+					predictRock = 0;
 					attach.attached = 0;
 					player.moveTo(0, 1);
 					attach.moveTo(0, -1, 16, 5);
+					attach = 0;
 					this.stopMoving();
-
+					player.frame = 2;
 					// TODO: reduce number of empty ahu's, level complete
+					setTimeout(e => {
+						updateInGameUI();
+						complete = 9;
+						switchState();
+					}, 250);
 				}, 133);
 			}
 		}
@@ -463,6 +483,36 @@ class Board {
 			this.buttonsArr[i].resize();
 		}
 	}*/
+
+	displayScreen() {
+		gameContext.globalAlpha = 0.6;
+		gameContext.fillStyle = "#0078d7";
+		gameContext.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+
+		gameContext.fillStyle = "#fff";
+		gameContext.fillRect(gameCanvas.width*.25, gameCanvas.height*.4, gameCanvas.width*.5, gameCanvas.height*.2);
+		gameContext.globalAlpha = 1;
+
+		//gameContext.fillStyle = "#fff";
+		//gameContext.fillRect(5,0,85,28)
+		//✔️☑️⭐🌟🥔🏅🥇🥈🥉🎖️🏆
+		gameContext.font = "bold 50px Trebuchet MS";
+		gameContext.textAlign = "center";
+
+		gameContext.lineWidth = width/99;
+		gameContext.strokeStyle = "#232";
+
+		gameContext.strokeText(complete?"Level Complete":"Level Failed", gameCanvas.width/2, gameCanvas.height*.51);
+		gameContext.strokeStyle = "#000";
+		gameContext.fillText(complete?"Level Complete":"Level Failed", gameCanvas.width/2, gameCanvas.height*.51);
+		gameContext.font = "bold 99px Trebuchet MS";
+		gameContext.fillText(complete?"🥇":"💢", gameCanvas.width/2, gameCanvas.height*.75);
+
+		controls.style.display = "none";
+
+		action = complete ? 9 : 8;
+		updateInGameUI(1);
+	}
 
 	// Draw the board
 	draw() {

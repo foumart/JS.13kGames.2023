@@ -15,7 +15,7 @@ class PixelArt {
 		PixelArt.paletteMoai = [
 			"f1d2b2d8af8cb58e6a936548603e283a241a",
 			"f1d2b2d8af8cb58e6a936548603e283a241affffff",
-			"f1d2b2d8af8cb58e6a936548603e283a241a66ff66"
+			"f1d2b2d8af8cb58e6a936548603e283a241a00ff00"
 		];
 		PixelArt.paletteCharacter = "fffdc1ff3100ff9262dc663c864016642600401800";
 		PixelArt.paletteRoad = "e3c7b1e1bca0c8a284ad8d70937b6772573e4c3417";
@@ -105,8 +105,8 @@ class PixelArt {
 		// 16x18 transparent sprites
 		PixelArt.dataCharacter = PixelArt.extract(
 			// Character frames
-			"@@@@xJWA@@@@@WyJx@@@@ppGxUG@D@onnFJ@\`cxd[c}A@PQXGeGnlGpt\`H[Ht]@@F@dGdkD@pE@Xd[E@@g{Fg~fp~@X_|ze|n\\G@fCbxhCc{pExJjOtX|hF@RQXE\`CpE@VZf@@@h@@pRwk@@@@pCEh\\F@@@oQGxJ}@" +
-			"@@@@xJWA@@@@@WyJx@@@@ppGxUG@D@onnFJ@\`cxd[c}A@PQX~exnlGpt\`A[At]@@F@dGdkD@pE@Xd[E@@g{Fg~fp~@X_|ze|n\\G@fCbxhCc{pExJjOtX|hF@RQXE\`CpE@VZf@@@h@@pRwk@@@@pCEh\\F@@@oQGxJ}@" +
+			"@@@@xJWA@@@@@WyJx@@@@ppG\`UG\`@@onnFJ@\\Dxd[c}A@JBX~exnlGfF\`A[At]@p@@dGdkD@xE@Xd[E@@g{Fg~fp~@X_|ze|n\\G@\`CbxhCc{pGxJjOtX|hF@RQXE\`CpE@VZf@@@xF@pRwk@@@@pCEh\\F@@@oQGxJ}@" +
+			"@@@@xJWA@@@@@WyJx@@@@ppG\`UG\`@@onnFJ@\\Dxd[c}A@JBXGeGnlGfF\`H[Ht]@p@@dGdkD@xE@Xd[E@@g{Fg~fp~@X_|ze|n\\G@\`CbxhCc{pGxJjOtX|hF@RQXE\`CpE@VZf@@@xF@pRwk@@@@pCEh\\F@@@oQGxJ}@" +
 			"@@@@@WyJG@@@@JWy@@D@wuwX@@\`cxe\\lFWGPQhFeGwJ@hD\`H\\HlA@@F@d[\\sE@xE@^x\\l{@g{G]\\cED@X_|\`Iipx@E\`kzl~~cGn@sixhC\\|u@@JjOl\`{F@pRc^EXDE@@VR\`@@@@@@pRwk@@@@pCFh\\F@@@oQGxJ}@"+
 			// Ahu
 			"@cuvvwv@pldfefeFnvnvvnvue\\ldcl\\llmemmemeekcc]dkln]mmkm]uLcccbcSQwJJIJIJ}{]wwokoDlvcfvvgU]lnl\\vp]emnumbwfqww~l}~ikfY|vFOKlolul}YUIIIIIIjh\\ZdScSE",

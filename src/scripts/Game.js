@@ -3,8 +3,8 @@ class Game {
 	constructor(stage) {
 		if (Game.instance) return Game.instance;
 		this.stage = stage || stage;
-		this.turn = 0;
-		this.step = 0;
+		turn = 0;
+		step = 0;
 		Game.instance = this;
 		const stageData = this.getStageData(this.stage);
 		this.stageName = stageData.name;
@@ -14,12 +14,12 @@ class Game {
 
 	start() {
 		board.draw();
-		this.loop = setInterval(() => {
-			if (state <= 1) {
+		this.loop = setInterval(e => {
+			if (state < 2) {
 				// gameplay
-				this.step ++;
+				step ++;
 				if (!earth) board.draw();
-			} else {
+			} else if (state < 4) {
 				// switch state - will be loading new level
 				clearInterval(this.loop);
 				this.destroy();
@@ -39,6 +39,9 @@ class Game {
 						
 					});
 				});*/
+			} else {
+				clearInterval(this.loop);
+				board.displayScreen(1);
 			}
 		}, 1000 / 60);
 	}

@@ -16,7 +16,11 @@ function isTouchDevice() {
 }
 
 let state = 0;// -1: zoomed out Earth with animated logo, 0: zoomed in Isle view Title screen, 1-2 changes when starting a level
-let stage = 0;// 0 - title screen, > 1 - directly load any level (state should be 0)
+let stage = 1;// 0 - title screen, > 1 - directly load any level (state should be 0)
+
+let turn;
+let step;
+let complete;
 
 // global sizes
 let width;
@@ -94,9 +98,9 @@ function createUI() {
 		// Generate the sky starfield
 		stars = document.createElement('div');
 		mainDiv.insertBefore(stars, earth).className = "title star";
-		setTimeout(() => {
+		setTimeout(i => {
 			stars.innerHTML = `<svg fill="#57a7eb" viewBox="0 0 ${width} ${height}"></svg>`;
-			for(let i=99;i--;) stars.children[0].innerHTML += `<text x=${Math.random()*width} y=${Math.random()*height}>.</text>`
+			for(i=99;i--;) stars.children[0].innerHTML += `<text x=${Math.random()*width} y=${Math.random()*height}>.</text>`
 		}, 1);
 	}
 
@@ -115,16 +119,16 @@ function createUI() {
 			//inDiv
 			//inDiv.style.minHeight = "unset";
 			TweenFX.to(tween, intoSpeed, {earth: 99}, 1,
-				() => {
+				e => {
 					inDiv.style.maxHeight = tween.earth + "%";
 				},
-				() => {
+				e => {
 					//tween.board = TODO
 					//TweenFX.to(tween, intoSpeed*1.6, {board: 75}, 2);
-					TweenFX.to(tween, intoSpeed*2, {earth: 60}, 2, () => {
+					TweenFX.to(tween, intoSpeed*2, {earth: 60}, 2, e => {
 						inDiv.style.transform = `scale(${tween.earth/100}) translateY(-${(99-tween.board)*1.2}vh)`;
 						inDiv.style.maxHeight = tween.earth + "%";
-					}, () => {
+					}, e => {
 						tween.earth = 0;
 						//tween.board = 0;
 						switchState();
@@ -136,7 +140,7 @@ function createUI() {
 		} else if (!stage) {
 			// Earth zoom-in transition
 			gameCanvas.style.transform = "rotate(-45deg) scale(0.1)";
-			TweenFX.to(tween, intoSpeed, {earth: 99}, 0, () => {
+			TweenFX.to(tween, intoSpeed, {earth: 99}, 0, e => {
 				if (earth) earth.style.transform = `scale(${tween.earth})`;
 
 				if (tween.earth > 25 && !uiState) {
@@ -144,9 +148,9 @@ function createUI() {
 					// Generate game board and zoom it in
 					game = new Game(stage);
 
-					TweenFX.to(tween, intoSpeed, {board: 1}, 0, () => {
+					TweenFX.to(tween, intoSpeed, {board: 1}, 0, e => {
 						gameCanvas.style.transform = `rotate(${-45 * (1-tween.board)}deg) scale(${tween.board})`;
-					}, () => {
+					}, e => {
 						uiState = 2;
 						// Show Play button
 						playButton.innerHTML += " Play";
@@ -172,10 +176,10 @@ function createUI() {
 		// Generate In-Game UI
 		controls = document.createElement('div');
 		inDiv.appendChild(controls);
-		upButton = generateUIButton(controls, '&#x25B2', () => {board.act(0, -1)});   // ^
-		leftButton = generateUIButton(controls, '&#x25C0', () => {board.act(-1, 0)}); // <
-		rightButton = generateUIButton(controls, '&#x25B6', () => {board.act(1, 0)}); // >
-		downButton = generateUIButton(controls, '&#x25BC', () => {board.act(0, 1)});  // v
+		upButton = generateUIButton(controls, '&#x25B2', e => board.act(0, -1));   // ^
+		leftButton = generateUIButton(controls, '&#x25C0', e => board.act(-1, 0)); // <
+		rightButton = generateUIButton(controls, '&#x25B6', e => board.act(1, 0)); // >
+		downButton = generateUIButton(controls, '&#x25BC', e => board.act(0, 1));  // v
 
 		upButton.style = "margin:0;width:100%";
 		leftButton.style = "float:left;margin:-1vh 0 0 -1vw;width:45%";
@@ -327,6 +331,10 @@ function resize(e) {
 
 	// Generate the Moai Alley title logo
 	generateScaledTitle();
+
+	if (state == 4) {
+		board.displayScreen();
+	}
 }
 
 function getScale(h, w){
@@ -338,9 +346,16 @@ function switchState(event, loadStage) {
 		state = 0;
 	} else if (!state) {
 		state = loadStage ? 3 : 2;
-		// check Game loop interval on where the state actually changes
-	} else if (state > 1) {
+		// Check Game loop interval on where the state actually changes
+	} else if (state == 1 && !loadStage) {
+		// Level Complete / Game Over Screen
+		state = 4;
+	} else if (state < 4) {
 		state = 1;
+	} else if (state == 4 && loadStage) {
+		// Proceed from Level Complete
+		state = complete ? 2 : 3;// instruct to load next level or the same
+		game.start();
 	}
 }
 
