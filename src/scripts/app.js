@@ -16,7 +16,7 @@ function isTouchDevice() {
 }
 
 let state = 0;// -1: zoomed out Earth with animated logo, 0: zoomed in Isle view Title screen, 1-2 changes when starting a level
-let stage = 1;// 0 - title screen, > 1 - directly load any level (state should be 0)
+let stage = 0;// 0 - title screen, > 1 - directly load any level (state should be 0)
 
 // global sizes
 let width;
@@ -102,7 +102,7 @@ function createUI() {
 
 	// Fullscreen and Sound buttons
 	fullscreenButton = generateUIButton(uiDiv, '&#x26F6', toggleFullscreen);
-	soundButton = generateUIButton(uiDiv, '&#9881', toggleSound);// sound: '&#x1F50A'
+	soundButton = generateUIButton(uiDiv, '🕪', toggleSound);// settings: '&#9881'// sound: '&#x1F50A'
 
 	// Generate Main Menu
 	if (state < 1 && !stage) {
@@ -177,9 +177,9 @@ function createUI() {
 		rightButton = generateUIButton(controls, '&#x25B6', () => {board.act(1, 0)}); // >
 		downButton = generateUIButton(controls, '&#x25BC', () => {board.act(0, 1)});  // v
 
-		leftButton.style = "float:left;margin:-1% 0 0 -2%;width:45%";
-		rightButton.style = "float:right;margin:-1% 0 0;width:45%";
-		upButton.style = "margin:0 0 -1%;width:100%";
+		upButton.style = "margin:0;width:100%";
+		leftButton.style = "float:left;margin:-1vh 0 0 -1vw;width:45%";
+		rightButton.style = "float:right;margin:-1vh -1vw 0;width:45%";
 		downButton.style = "margin:0;width:100%;line-height:99%";
 
 		actionButton = generateUIButton(inDiv, '', board.doAction.bind(board), "icon action");
@@ -345,7 +345,14 @@ function switchState(event, loadStage) {
 }
 
 function toggleSound(event) {
-	console.log("toggleSound");
+	if (SoundFX.volume) {
+		SoundFX.volume = 0;
+		soundButton.innerHTML = "🕩";
+	} else {
+		SoundFX.volume = 1;
+		SoundFX.c(2,5);
+		soundButton.innerHTML = "🕪";
+	}
 }
 
 /*function mute(){

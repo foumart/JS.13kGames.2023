@@ -57,12 +57,14 @@ function updateInGameUI() {
 		}
 	} else if (currentPath > -1) {
 		predictRock = 0;
-		html = `<div style="width:100%;font-size:${80*scale}px;margin-top:${99*scale}px">Road</div>`;
-		html += `<div style="width:100%;font-size:${56*scale}px;margin-top:${175*scale}px">Stone</div>`;
-		html += `<div style="width:100%;font-size:${38*scale}px;margin-top:${220*scale}px">spent: ${
+		html = `<div style="width:100%;font-size:${80*scale}px;margin-top:${120*scale}px">Road</div>`;
+		html += `<div style="width:100%;font-size:${55*scale}px;margin-top:${195*scale}px">Stone</div>`;
+		html += `<div style="width:100%;font-size:${40*scale}px;margin-top:${245*scale}px">spent: ${
 			!currentPath ? 2 : currentPath>0&&currentPath<5 ? 3 : currentPath>6&&currentPath<11 ? 5 : currentPath==15 ? 6 : 4
 		}</div>`;
-		actionButton.innerHTML = html;// + `<div class="button" style="top:4vh">&#x2692</div>`;
+		actionButton.innerHTML = html + `<div class="button" style="top:-2vh">${
+			["▢", "◡", "⊆", "◠", "⊇", "║", "═", "╠", "╦", "╣", "╩", "╔", "╗", "╝", "╚", "╬"][currentPath]
+		}</div>`;
 		disableActionButton();
 	} else {
 		//action = 0;

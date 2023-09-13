@@ -8,13 +8,18 @@ class PixelArt {
 			// Tree
 			"067c000ebb0046e40059ff00d041147e321a622411",
 			// Rock
-			"f7e064b4897c5f4e482b8a0e1e68078f4832622411",
+			"f7e064b4897c715b543ca61c1751068f4832622411",
 			// Lake
-			"89b3ff427eeb1e61db1448a60b378532bd17077707"
+			"71a4ff427eeb1e61db1448a60b37852dbd14077707"
 		];
-		PixelArt.paletteMoai = "cdaf98a88e7986715f6b56455444364736292d211a";
-		PixelArt.paletteCharacter = "fffdc1ff4e24fe9773cb7151864016642600401800";
-		PixelArt.paletteRoad = "e2c5afdbb293c8a284ad8d70937b6772573e4c3417";
+		PixelArt.paletteMoai = [
+			"f1d2b2d8af8cb58e6a936548603e283a241a",
+			"f1d2b2d8af8cb58e6a936548603e283a241affffff",
+			"f1d2b2d8af8cb58e6a936548603e283a241a66ff66"
+		];
+		PixelArt.paletteCharacter = "fffdc1ff3100ff9262dc663c864016642600401800";
+		PixelArt.paletteRoad = "e3c7b1e1bca0c8a284ad8d70937b6772573e4c3417";
+
 		PixelArt.paletteTiles = [
 			"97de595cc149ffcc7d97de59ffcc7dffcc7dffcc7d",//norm
 			"97de595cc149ffcc7d97de59ffcc7dffcc7dffcc7d",//norm
@@ -38,9 +43,9 @@ class PixelArt {
 			// Tree
 			"@@@QA@@@@@PdJ@R@@RP\\SP\\BPdBZAPdSP\\BHAa[J@ZAppMSA@Hnb~@@@Q@P\\BPB@bTP\\zbT@b[OJqb[BaSEyFbSAHRAwGQSA@I@nFHI@@@@uG@@@@@@~F@@@@@puw@@@" +
 			// Rock
-			"@@@@jlD@@@@PI\`\`@@@@JQGED@@pIZ~h@@@NQrqGE@@ORNV^@@xQRQrCE@tYJRJZ@\`Or_RQ{DhKRCNZFGxNrxSRwc}QZwR{PoSRCWZ\\JzS{c{}S|\\po_G_}x}Gx{G" +
+			"@@@@blD@@@@PIg\`@@@@JQ{ED@@pIZ^oC@@NQrqCE@@ORNV~C@xQRQrCE@tYJRJjC\`Or_RQ{DhKRCNZFGxNrxSRwc}QZwR{PoSRCWZ\\JzS{c{}S|\\po_G_}x}Gx{G" +
 			// Lake
-			"@@@wGp@@pGxeewGFxll[JllGfQ[SIZ[}W[SJZ[Kj\\SR[[KQ[cbcccZ[STll\\\\\\SjeeeeeebkmlllllllmmmeeeemommmmmmEpmmmmmmFpxmmmmwGx@vGw@@@G@x@x@",
+			"@@@wGp@@pGeewGFxlT[JjlGfQ[SIRR}W[SJZ[Kj\\SJ[[KQ[cb[[SZ[ST\\\\\\\\[SZecccccbcl\\\\\\\\llleeeeeeemollllll}pmeeemmFpmmmmwGx@vwGw@@@Gxx@x@",
 			256
 		);
 
@@ -51,9 +56,9 @@ class PixelArt {
 			// Grass (uses 6 palettes)
 			"@@c_qCH@@hS[~^SAXeMSsY[BSkC@@P[[NC@@h@XKwHHKeEBqFP@PhYB@HP@@@ZCHP@P[A@@P@XN[[@A@YswKKEB@ZJ^SklYZ[SH@[]sY[C@@@Z~^S@@BAAqKP@A[B@@C" +
 			// Road [o]
-			"@@@@@@@@@@@@@@@@@@@@@@@@@@pT{E@@@@sr^@@@\`s\\QnC@@X}fIwG@@xvs}ZF@@xMt_G@@xUtSUC@@XouvnG@@@WJ}f@@@@\`LdA@@@@@@@@@@@@@@@@@@@@@@@@@@" +
+			"@@@@@@@@@@@@@@@@@@@@@@@@@@\`ekD@@@@TSS\\@@@hcY\\jF@@pUSS\\E@@h\\\\ZbC@@hTKckE@@xfZZtG@@@oS\\~@@@@xfnG@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" +
 			// Road [U]
-			"@@{ms}@@@xKfkcG@@\`gkNtD@@@nTc}F@@@skT^@@@pk\\auG@@\`]b^f@@@@nsez@@@@OTTn@@@@PekD@@@@\`sLF@@@@@bj@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" +
+			"@xVSSlF@@p]Z\\rG@@xVSKlF@@p]\\ZbE@@@TSS\\D@@hcY\\j@@@pUSS\\E@@h\\\\ZbC@@@UKck@@@@cZZb@@@@hcKC@@@@@ZZ@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" +
 			// Water [~~]
 			"hm@mmmm@@hm@@@@m@@@@@@@@vF@pvvF@vvvvvvvv@vvF@@pv@@@@@@@@m@@hmmE@mmmmmmmmlmmmddmmdmdddddddddd[[ddcd\\[[[[[[[[[KY[[[[[IIIY[OIIQIJII" +
 			// Water [. ]
@@ -88,9 +93,9 @@ class PixelArt {
 		// 14x20 transparent sprites
 		PixelArt.dataMoai = PixelArt.extract(
 			// Front
-			"@@SQc@@@XZ[\\D@@P~@wC@@sGZxf@@~xQGw@@^tQ^t@@VsQVs@@XTItD@@PtxfC@@ZbwTc@@SKZZ[@@\\jvVc@@\`S[[D@@@\\bc@@@wG@x~@x~~uwwGwwu~x~~ncuoFwp]l~~}F@fuwww@" +
+			"@xTQcG@@g[Z\\|@x_u@n{GxkFZpeGupQFn^lQ]tUkQUkXTIlDVlpes\\bn\\cTSQScx\\jm]cGx\`SS\\DG@G\\bcx@@nF@pu@puulnhFnnlvuEuuecenlhh\\llteE@eeeen@" +
 			// Left
-			"@@XSQs@@@eJJZF@hoS\\lC@x@wcuE@@Qx\\n@@JbGcu@PQ|n\\^A@bfaccC@@LZ\\nD@uWccX@xh\\\\uG@w\\b}n@@\`SDw\\@@@@xecF@@@oZ\\t@@\`UlfeF@lcuuow@e]l~x}hlduEGG@wn~|~@",
+			"@@@TQk@@@eJJZE@hnS\\lC@p@nceE@@Qp\\lD@LbFcu@\`Qtm\\^j@beaccs@@LZ\\mD@eVccX@ph\\\\nF@n\\bue@@\`SDn\\@@@@pecE@@@nZ\\l@@\`UleeE@lcmlnn@e\\luuuh\\dmnnF@nmuuu@",
 			280
 		);
 
@@ -100,16 +105,16 @@ class PixelArt {
 		// 16x18 transparent sprites
 		PixelArt.dataCharacter = PixelArt.extract(
 			// Character frames
-			"@@@@@xJG@@@@@Wy@@@@~~xG@h@xuuuG@UEg\\[l@JB{h|pc@VFDYCan@p@\`|\`\\e@h@@c\\k@@\\@@twD@@{cWodgfCp\\PEG\\_\\h@PS}cFcp@PZBl@\\h@pRt|@@p@@Vz_D@h@]h@ek@x@Oz@Wy@" +
-			"@@@@@xJG@@@@@Wy@@@@~~x@@h@xuuuG@UEg\\[l@JBsoDwc@VFLXK\`n@p@\`|\`\\e@h@@c\\k@@\\@@twD@@{cWodgfCp\\PEG\\_\\h@PS}cFcp@PZBl@\\h@pRt|@@p@@Vz_D@h@]h@ek@x@Oz@Wy@" +
-			"@@@@@@Wy@@@@@xJGh@@o~~A@UEpecuG@JB}h|x@@VFDaCa{@x@\`\\c[]@p@pCgc^@\\@hc[l\`@{C@LI}@@pdEgu\`fChXfEG\\_\\p@PS}cFch@VZrl@\\p@pRB|@@h@@V}^D@@@]@@ek@@@O}@oy@"+
+			"@@@@xJWA@@@@@WyJx@@@@ppGxUG@D@onnFJ@\`cxd[c}A@PQXGeGnlGpt\`H[Ht]@@F@dGdkD@pE@Xd[E@@g{Fg~fp~@X_|ze|n\\G@fCbxhCc{pExJjOtX|hF@RQXE\`CpE@VZf@@@h@@pRwk@@@@pCEh\\F@@@oQGxJ}@" +
+			"@@@@xJWA@@@@@WyJx@@@@ppGxUG@D@onnFJ@\`cxd[c}A@PQX~exnlGpt\`A[At]@@F@dGdkD@pE@Xd[E@@g{Fg~fp~@X_|ze|n\\G@fCbxhCc{pExJjOtX|hF@RQXE\`CpE@VZf@@@h@@pRwk@@@@pCEh\\F@@@oQGxJ}@" +
+			"@@@@@WyJG@@@@JWy@@D@wuwX@@\`cxe\\lFWGPQhFeGwJ@hD\`H\\HlA@@F@d[\\sE@xE@^x\\l{@g{G]\\cED@X_|\`Iipx@E\`kzl~~cGn@sixhC\\|u@@JjOl\`{F@pRc^EXDE@@VR\`@@@@@@pRwk@@@@pCFh\\F@@@oQGxJ}@"+
 			// Ahu
 			"@cuvvwv@pldfefeFnvnvvnvue\\ldcl\\llmemmemeekcc]dkln]mmkm]uLcccbcSQwJJIJIJ}{]wwokoDlvcfvvgU]lnl\\vp]emnumbwfqww~l}~ikfY|vFOKlolul}YUIIIIIIjh\\ZdScSE",
-			288
+			324
 		);
 
 		PixelArt.spritesAhu = PixelArt.drawSprites([PixelArt.dataCharacter.pop()], PixelArt.paletteRoad, 18);
-		PixelArt.spritesCharacter = PixelArt.drawSprites(PixelArt.dataCharacter, PixelArt.paletteCharacter, 18);
+		PixelArt.spritesCharacter = PixelArt.drawSprites(PixelArt.dataCharacter, PixelArt.paletteCharacter, 18, 18);
 	}
 
 	static drawSprites(data, palette, height = 16, width = 16, flipped = false, rotated = 0) {
@@ -119,11 +124,11 @@ class PixelArt {
 				if (data.length < palette.length) {
 					// Draw tiles that have same data but multiple palettes (grass, water)
 					palette.forEach((colors) => {
-						sprites.push(PixelArt.drawSprite(spriteData, width, height, colors, 0, flipped, rotated));
+						sprites.push(PixelArt.drawSprite(spriteData, width, height, colors, width == 14 ? 1 : 0, flipped, rotated));
 					});
 				} else {
 					// Draw objects (trees, mauntain)
-					sprites.push(PixelArt.drawSprite(spriteData, width, height, palette[id],  id == 3 ? 0 : id > 1 ? 1 : 0.8, flipped, rotated));
+					sprites.push(PixelArt.drawSprite(spriteData, width, height, palette[id], id == 3 ? 0 : id > 1 ? 1 : 0.8, flipped, rotated));
 				}
 			} else {
 				// Draw elements that have the same palette (character, ahu, moai)
@@ -148,11 +153,14 @@ class PixelArt {
 		else if (rotated == 3) ctx.translate(0, height);
 		ctx.rotate((Math.PI/2) * rotated);
 		for(let y = 0; y < height; y ++) {
-			for(let z,x = flipped ? width-1 : 0; flipped ? x > 0 : x < width; flipped ? x -- : x ++) {
+			for(let w,z,x = flipped ? width-1 : 0; flipped ? x > 0 : x < width; flipped ? x -- : x ++) {
 				z = (flipped ? width - x : x);
 				if (spriteData[y * width + z]) {
-					ctx.fillStyle = "#" + palette.substr(6 * (spriteData[y * width + z] - 1), 6);
-					ctx.fillRect(x, y, 1, 1);
+					w = palette.substr(6 * (spriteData[y * width + z] - 1), 6);
+					if (w) {
+						ctx.fillStyle = "#" + w;
+						ctx.fillRect(x, y, 1, 1);
+					}
 				}
 			}
 		}

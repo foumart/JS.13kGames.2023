@@ -337,7 +337,6 @@ class Board {
 			}
 		} else if (action == 2) {// Chop tree
 			let unit = this.getUnit(player.x, player.y);
-
 			if (unit > -1) {
 				if (mana < 2) {
 					SoundFX.p(1, 50, -1, 9);// disabled sound
@@ -350,7 +349,6 @@ class Board {
 				}
 			}
 		} else if (action == 5) {// Attach (Move)
-
 			this.actionAttach(hilight);
 		} else if (action == 6) {// Stop
 			this.stopMoving();
@@ -373,15 +371,16 @@ class Board {
 		if (unit && state > 0) {
 			if (unit.highlighted) {
 				if (unit.type == 3) {// Carve!
-					SoundFX.c(3); // carve sound
-					SoundFX.p(2, 200, -9, 60, 60);
+					SoundFX.c(2, 16, 99); // carve sound
+					SoundFX.p(2, 200, -9, 40);
 					rock += 2;
 					mana -= 1;
 					unit.convertToMoai();
 					this.placeRoad(unit.x, unit.y);
-					unit.highlighted = 1;
-					hilight = unit;
-					action = unit.type;
+					//unit.highlighted = 1;
+					//hilight = unit;
+					//action = unit.type;
+					action = 0;
 				} else {// Attach and prepare to pull a statue
 					this.actionAttach(unit);
 				}

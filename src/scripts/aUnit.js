@@ -26,12 +26,14 @@ class Unit extends Tile {
 				break;
 			case 5: // moai
 				this.convertToMoai();
-				if (!state && (x > 10 || y > 6)) this.frame = 1;
-				if (!state && (x < 3 && y > 6)) this.frame = 3;
+				if (!state && (x > 10 || y > 6)) this.frame = 3;
+				if (!state && (x < 3 && y > 6)) this.frame = 9;
 				break;
 			case 6: // player
-				this.H = 20;
-				this.baseY = this.offsetY = -0.5;
+				this.H = 18;
+				this.W = 16;
+				this.baseX = this.offsetX = 0;
+				this.baseY = this.offsetY = -0.4;
 				this.animated = true;
 				this.animate();
 				break;
@@ -48,7 +50,7 @@ class Unit extends Tile {
 		this.W = 14;
 		this.S = 14;
 		this.baseX = this.offsetX = 0;
-		this.baseY = this.offsetY = this.y < 2 || !state ? -1.3 : -0.7;
+		this.baseY = this.offsetY = this.y < 2 || !state ? -1.3 : -0.6;
 	}
 
 	// Called when a Moai is being moved - depends on prevMove
@@ -66,11 +68,13 @@ class Unit extends Tile {
 
 	// Moves the unit in an adjacent tile
 	moveTo(x, y, speed = 8, alter = -1) {
-		if (hilight) {
-			SoundFX.p(1, 99, -9, 9);// remove hilight sound
-		} else {
-			SoundFX.p(1, 60, -2, 5);// move step sound
-			SoundFX.p(1, 50, -1, 5, 80);
+		if (state > 0) {
+			if (hilight) {
+				SoundFX.p(1, 99, -9, 9);// remove hilight sound
+			} else {
+				SoundFX.p(1, 60, -2, 5);// move step sound
+				SoundFX.p(1, 50, -1, 5, 80);
+			}
 		}
 
 		if (alter > -1) {
@@ -113,7 +117,7 @@ class Unit extends Tile {
 				: this.type < 4
 					? PixelArt.spritesObjects[this.type - 1]
 					: this.type == 5
-						? PixelArt.spritesMoai[this.frame]
+						? PixelArt.spritesMoai[this.frame + (this.highlighted ? 1 : this.attached ? 2 : 0)]
 						: this.type == 4
 							? PixelArt.spritesObjects[3]
 							: PixelArt.spritesCharacter[this.frame],
@@ -123,7 +127,7 @@ class Unit extends Tile {
 			this.height / this.S * this.H
 		);
 
-		if (this.highlighted || this.attached) {// TODO: make a proper selection
+		/*if (this.highlighted || this.attached) {// TODO: make a proper selection
 			this.context.beginPath(); 
 			this.context.strokeStyle = this.attached ? '#0f0' : '#fff';
 			this.context.lineWidth = width/99;
@@ -133,6 +137,6 @@ class Unit extends Tile {
 				this.width / this.S * this.W,
 				this.height / this.S * this.H
 			);
-		}
+		}*/
 	}
 }
