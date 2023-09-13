@@ -144,11 +144,13 @@ class Board {
 		this.path = [];
 		this.units = [];
 		let tile, fieldArr, pathArr, mapType, unitType;
+		remain = 0;
 		for(y = 0; y < this.boardHeight; y++) {
 			fieldArr = [];
 			pathArr = [];
 			for(x = 0; x < this.boardWidth; x++) {
 				mapType = this.mapData[y][x];
+				if (mapType == 1) remain ++;
 				tile = new MapTile(x, y, mapType);
 				if (!mapType) tile.frame = Math.random() * 5.5 | 0;
 				fieldArr.push(tile);
@@ -212,6 +214,10 @@ class Board {
 
 	isPassable(x, y) {
 		return !this.mapData[y][x] && this.unitsData[y][x] < 3;
+	}
+
+	isMoveable(x, y) {
+		return !this.mapData[y][x] && !this.unitsData[y][x];
 	}
 
 	getUnit(x, y) {
@@ -297,23 +303,35 @@ class Board {
 	}
 
 	// Called by direct user input (keyboard arrow keys or mouse click on direction buttons)
-	act(x, y) {
+	act(x, y) {//this.definePrevMove()
 		if (!this.isPassable(player.x + x, player.y + y)) {
 			this.actionStuck(x, y);
-		} else if (player.offsetX == player.baseX && player.offsetY == player.baseY) {
+		}
+		else if (attach && this.definePrevMove() &&
+			!this.isMoveable(
+				attach.x + (prevMove == 2 ? 1 : prevMove == 4 ? -1 : 0),
+				attach.y + (prevMove == 1 ? -1 : prevMove == 3 ? 1 : 0)
+			)
+		) {
+			// Can't walk moai into trees
+			this.stopMoving();
+			this.actionStuck(x, y);
+		}
+		else if (player.offsetX == player.baseX && player.offsetY == player.baseY) {
 			if (attach) {
 				if (this.definePrevMove()) {
 					attach.move(16, 5);
-					if (predictRock && this.path[attach.y][attach.x] == -1) {
+					if (predictRock && this.path[attach.y][attach.x].type == -1) {
 						this.placeRoad(attach.x, attach.y);
 						rock -= predictRock;
 						wood -= 1;
-						mana -= 1;
 					}
+
+					mana -= 1;
 				}
 			}
 
-			player.moveTo(x, y);
+			player.moveTo(x, y, attach ? 16 : 8);
 
 			if (!attach) this.removeHilight();
 
@@ -322,10 +340,18 @@ class Board {
 	}
 
 	// Called by direct user input - Perform action (chop, pave, carve, etc.)
-	doAction() {
-		if (action > 7) {// Level Complete proceed
-			//complete = action - 8;
-			switchState(0, 1);
+	doAction() {//console.log("do", action)
+		if (action > 7) {
+			if (action == 9) {
+				// Level Complete proceed
+				switchState(0, 1);
+			} else {
+				// Level Failed retry
+				complete = 0;
+				state = 0;
+				game.start();
+				setTimeout(e => state = 3, 1);
+			}
 		} else
 		if (action == 1) {// Pave road
 			if (rock < predictRock || wood < 1 || board.pathData[player.y][player.x] > -1) {
@@ -342,16 +368,18 @@ class Board {
 		} else if (action == 2) {// Chop tree
 			let unit = this.getUnit(player.x, player.y);
 			if (unit > -1) {
-				if (mana < 2) {
+				/*if (mana < 2) {
 					SoundFX.p(1, 50, -1, 9);// disabled sound
-				} else {
+				} else {*/
 					SoundFX.c(2, 16);// chop sound
 					unit = this.units.splice(unit, 1)[0];
 					this.unitsData[player.y][player.x] = 0;
 					wood += (4-unit.type);
-					mana -= 1;
-				}
-			}
+					if (unit.type == 1) mana -= 1;
+				//}
+			}//actionStuck
+		} else if (action == 3) {// Carve
+			this.actionStuck(0, 0, hilight);
 		} else if (action == 5) {// Attach (Move)
 			this.actionAttach(hilight);
 		} else if (action == 6) {// Stop
@@ -370,8 +398,8 @@ class Board {
 		action = 6;
 	}
 
-	actionStuck(x, y) {
-		const unit = this.units[this.getUnit(player.x + x, player.y + y)];
+	actionStuck(x, y, unit) {
+		unit = unit || this.units[this.getUnit(player.x + x, player.y + y)];
 		if (unit && state > 0) {
 			if (unit.highlighted) {
 				if (unit.type == 3) {// Carve!
@@ -385,56 +413,86 @@ class Board {
 					// hilight the moai for a short while right after being carved
 					unit.highlighted = 1;
 					setTimeout(e => unit.highlighted = 0, 99);
-					//hilight = unit;
-					//action = unit.type;
+					// or have it remain hilighted reducing user clicks:
+					//hilight = unit; action = unit.type;
 					action = 0;
 				} else {// Attach and prepare to pull a statue
 					this.actionAttach(unit);
 				}
 			} else if (unit.attached) {// Swap with Moai
-				// TODO: [swap / move] sound
+				// Don't move Moai if player is standing on a tree
+				if (this.unitsData[player.y][player.x]) {
+					this.stopMoving();
+					SoundFX.p(1, 50, -1, 9);// disabled sound
+					return;
+				}
+
+				mana -= 1; 
+				updateInGameUI();
+
+				if (predictRock && this.path[player.y][player.x].type == -1) {
+					this.placeRoad(player.x, player.y);
+					rock -= predictRock;
+					wood -= 1;
+				}				
+
 				if (y == -1) {
 					player.moveTo(0, -1, 16);
-					unit.moveTo(0, 1, 16);
+					unit.moveTo(0, 1, 16, 5);
 				} else if (y == 1) {
 					player.moveTo(0, 1, 16);
-					unit.moveTo(0, -1, 16);
+					unit.moveTo(0, -1, 16, 5);
 				} else if (x == -1) {
 					player.moveTo(-1, 0, 16);
-					unit.moveTo(1, 0, 16);
+					unit.moveTo(1, 0, 16, 5);
 				} else if (x == 1) {
 					player.moveTo(1, 0, 16);
-					unit.moveTo(-1, 0, 16);
+					unit.moveTo(-1, 0, 16, 5);
 				}
-				
-				this.unitsData[player.y][player.x] = 0;
-				this.unitsData[unit.y][unit.x] = 5;
-				this.placeRoad(unit.x, unit.y);
-				rock -= predictRock;
-				wood -= 1;
-				mana -= 1;
-			} else if (unit.type == 3 || unit.type == 5) {
+			} else if (unit.type == 3) {
 				// hilight sound
 				SoundFX.c(2, 8);
 				unit.highlighted = 1;
 				hilight = unit;
 				action = unit.type;
-			} else console.log(unit.type);
+			} else if (unit.type == 5) {
+				if (unit.y > 1) {
+					this.actionAttach(unit);
+					// hilight sound
+					//SoundFX.c(2, 8);
+					//unit.highlighted = 1;
+					//hilight = unit;
+					//action = unit.type;
+				} else {
+					// Can't move already erected Moai
+					SoundFX.p(1, 50, -1, 5);// disabled sound
+				}
+			} else {
+				// bump into a lake
+				SoundFX.p(1, 50, -1, 5);// disabled sound
+			}
 			updateInGameUI();
 		} else {
 			const ahu = this.field[player.y + y][player.x + x];
 			if (ahu.type == 1 && attach) {
-				SoundFX.c(1, 20, 99)
-				SoundFX.c(2, 20, 99)
-				SoundFX.c(3, 20, 99)
-				SoundFX.c(4, 20, 99)
+				remain -= 1;
+				// moai erected sound
+				SoundFX.c(1, 20, 99);
+				SoundFX.c(2, 20, 99);
+				SoundFX.c(3, 20, 99);
+				SoundFX.c(4, 20, 99);
+				this.definePrevMove();
+				player.moveTo(0, -1, 8);
+				attach.move(8, 5);
+				if (predictRock && this.path[attach.y][attach.x].type == -1) {
+					this.placeRoad(attach.x, attach.y);
+					rock -= predictRock;
+					wood -= 1;
+				}
 
-				player.moveTo(0, -1);
-				attach.moveTo(0, -1, 8, 5);
-				this.placeRoad(attach.x, attach.y);
-				rock -= predictRock;
-				wood -= 1;
 				mana -= 1; 
+				updateInGameUI();
+
 				setTimeout(e => {
 					action = 0;
 					predictRock = 0;
@@ -442,15 +500,20 @@ class Board {
 					player.moveTo(0, 1);
 					attach.moveTo(0, -1, 16, 5);
 					attach = 0;
-					this.stopMoving();
+					updateInGameUI();
+					//this.stopMoving();
 					player.frame = 2;
 					// TODO: reduce number of empty ahu's, level complete
-					setTimeout(e => {
+					if (remain < 1) setTimeout(e => {
 						updateInGameUI();
-						complete = 9;
+						complete = 1;
+						action = 9;
 						switchState();
-					}, 250);
+					}, 350);
 				}, 133);
+			} else {
+				// bump at edges
+				SoundFX.p(1, 50, -1, 5);// disabled sound
 			}
 		}
 	}
@@ -458,8 +521,8 @@ class Board {
 	stopMoving() {
 		if (attach) {
 			// deattach sound
-			//SoundFX.c(2, 8);
-			SoundFX.p(1, 99, -9, 9);// remove hilight sound
+			SoundFX.p(1, 250, -20, 20);//SoundFX.c(4, 20);// cool sound
+			SoundFX.p(1, 99, -9, 9);
 			attach.attached = 0;
 			//attach.highlighted = 1;
 			hilight = attach;
@@ -470,6 +533,7 @@ class Board {
 
 	removeHilight() {
 		if (hilight) {
+			SoundFX.p(1, 99, -6, 9);// remove hilight sound
 			hilight.highlighted = 0;
 			hilight = 0;
 			action = 0;
@@ -493,10 +557,7 @@ class Board {
 		gameContext.fillRect(gameCanvas.width*.25, gameCanvas.height*.4, gameCanvas.width*.5, gameCanvas.height*.2);
 		gameContext.globalAlpha = 1;
 
-		//gameContext.fillStyle = "#fff";
-		//gameContext.fillRect(5,0,85,28)
-		//✔️☑️⭐🌟🥔🏅🥇🥈🥉🎖️🏆
-		gameContext.font = "bold 50px Trebuchet MS";
+		gameContext.font = `bold ${50*getScale(width,height)}px Trebuchet MS`;
 		gameContext.textAlign = "center";
 
 		gameContext.lineWidth = width/99;
@@ -505,13 +566,17 @@ class Board {
 		gameContext.strokeText(complete?"Level Complete":"Level Failed", gameCanvas.width/2, gameCanvas.height*.51);
 		gameContext.strokeStyle = "#000";
 		gameContext.fillText(complete?"Level Complete":"Level Failed", gameCanvas.width/2, gameCanvas.height*.51);
-		gameContext.font = "bold 99px Trebuchet MS";
-		gameContext.fillText(complete?"🥇":"💢", gameCanvas.width/2, gameCanvas.height*.75);
+		gameContext.font = `bold ${99*getScale(width,height)}px Trebuchet MS`;
+		gameContext.fillText(complete?"✮":"💢", gameCanvas.width/2, gameCanvas.height*.75);
+		if (complete) {
+			gameContext.fillText("✮", gameCanvas.width*.4, gameCanvas.height*.8);
+			gameContext.fillText("✮", gameCanvas.width*.6, gameCanvas.height*.8);
+		}
 
 		controls.style.display = "none";
 
 		action = complete ? 9 : 8;
-		updateInGameUI(1);
+		updateInGameUI(complete + 1);
 	}
 
 	// Draw the board

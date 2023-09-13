@@ -16,10 +16,11 @@ function isTouchDevice() {
 }
 
 let state = 0;// -1: zoomed out Earth with animated logo, 0: zoomed in Isle view Title screen, 1-2 changes when starting a level
-let stage = 1;// 0 - title screen, > 1 - directly load any level (state should be 0)
+let stage = 3;// 0 - title screen, > 1 - directly load any level (state should be 0)
 
 let turn;
 let step;
+let remain;
 let complete;
 
 // global sizes
@@ -106,7 +107,7 @@ function createUI() {
 
 	// Fullscreen and Sound buttons
 	fullscreenButton = generateUIButton(uiDiv, '&#x26F6', toggleFullscreen);
-	soundButton = generateUIButton(uiDiv, '🕪', toggleSound);// settings: '&#9881'// sound: '&#x1F50A'
+	soundButton = generateUIButton(uiDiv, '🔊', toggleSound);
 
 	// Generate Main Menu
 	if (state < 1 && !stage) {
@@ -362,11 +363,11 @@ function switchState(event, loadStage) {
 function toggleSound(event) {
 	if (SoundFX.volume) {
 		SoundFX.volume = 0;
-		soundButton.innerHTML = "🕩";
+		soundButton.innerHTML = "🔈";
 	} else {
 		SoundFX.volume = 1;
 		SoundFX.c(2,5);
-		soundButton.innerHTML = "🕪";
+		soundButton.innerHTML = "🔊";
 	}
 }
 
@@ -384,6 +385,17 @@ function startGame(dontAdvanceStage) {
 	if (!dontAdvanceStage) stage ++;
 	switchState();
 	game = new Game(stage);
+	hilight = 0;
+	attach = 0;
+	action = 0;
+	predictRock = 0;
+	
 	createUI();
 	resize();
+
+	// new level sound
+	SoundFX.p(0, -900, 45, 40, 0, .04);
+	SoundFX.p(1, -200, 15, 40);
+	SoundFX.p(2, 0, 9, 30, 250);
+	SoundFX.p(1, 20, 20, 20, 300);
 }

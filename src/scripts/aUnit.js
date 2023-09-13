@@ -45,6 +45,7 @@ class Unit extends Tile {
 
 	// Changes a Rock (Mountain) into Moai statue
 	convertToMoai() {
+		board.unitsData[this.y][this.x] = 5;
 		this.highlighted = false;
 		this.type = 5;
 		this.H = 20;
@@ -87,7 +88,7 @@ class Unit extends Tile {
 		this.y += y;
 		if (x) this.offsetX = this.baseX - x;
 		if (y) this.offsetY = this.baseY - y;
-		TweenFX.to(this, speed, {offsetY: this.type == 5 && this.y < 2 ? -1.2 : this.baseY, offsetX: this.baseX});
+		TweenFX.to(this, speed, {offsetY: this.type == 5 && this.y < 2 ? -1.2 : this.baseY, offsetX: this.baseX}, this == player ? 2 : 1);
 	}
 
 	// Infinite looping function for character idle animation
@@ -133,7 +134,7 @@ class Unit extends Tile {
 		if (this.highlighted && this.type == 3) {
 			this.context.beginPath(); 
 			this.context.strokeStyle = '#fff';
-			this.context.lineWidth = width/99;
+			this.context.lineWidth = (width > height ? width : height) / 99;
 			this.context.moveTo(x-o,y+h-o-o);
 			this.context.lineTo(x+o,y+h);
 			this.context.lineTo(x+w-o-o,y+h);

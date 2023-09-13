@@ -5,7 +5,7 @@ function onKeyDown(event) {//console.log(event.keyCode)
 		console.log("unitsData:", board.unitsData);
 		console.log("pathData:", board.pathData);
 		console.log(player.x, player.y);
-		debugger;
+		//debugger;
 	} else if (event.keyCode == 13 || event.keyCode == 32) { // action (chop a tree, carve a rock, pave a road)
 		if (state > 0) board.doAction();
 		else switchState();

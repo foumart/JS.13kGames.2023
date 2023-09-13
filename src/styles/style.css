@@ -40,7 +40,7 @@ canvas {
 
 .shake {
 	animation: shaking 1s infinite;
-	top: 6vh;
+	top: 3vh;
 }
 
 @keyframes shaking {

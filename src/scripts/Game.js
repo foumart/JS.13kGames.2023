@@ -24,24 +24,9 @@ class Game {
 				clearInterval(this.loop);
 				this.destroy();
 				startGame(state > 2);
-
-				// attempt transition
-				/*TweenFX.to(tween, 9, {board: 2}, 1, () => {
-					gameCanvas.style.transform = `scale(${tween.board})`;
-				}, () => {
-					this.destroy();
-					startGame(state > 2);
-					tween.board = 0.75;
-					gameCanvas.style.transform = `scale(0.75)`;
-					TweenFX.to(tween, 9, {board: 1}, 2, () => {
-						gameCanvas.style.transform = `scale(${tween.board})`;
-					}, () => {
-						
-					});
-				});*/
 			} else {
 				clearInterval(this.loop);
-				board.displayScreen(1);
+				board.displayScreen();
 			}
 		}, 1000 / 60);
 	}
@@ -68,39 +53,76 @@ class Game {
 			},
 			{
 				name: "Stage 1",
-				size: 5, x: 2, y: 2, wood: 5, rock: 3, mana: 5,
+				size: 5, x: 2, y: 2, wood: 8, rock: 3, mana: 6,
 				map: "f7f0300000c0",
 				data: "00004426420c",
-				path: "  0"//"       5    5    ec   2d"
+				path: "  0"
 			},
 			{
-				name: "Stage 1",
-				size: 5, x: 2, y: 2, wood: 5, rock: 3, mana: 5,
+				name: "Stage 2",
+				size: 5, x: 2, y: 2, wood: 8, rock: 3, mana: 8,
 				map: "f7f0308000c0",
-				data: "00020010500d",
+				data: "00000010500d",
 				path: ""
 			},
 			{
-				name: "Stage 1",
+				name: "Stage 3",
+				size: 5, x: 2, y: 2, wood: 8, rock: 3, mana: 8,
+				map:  "f7c0820820c0",
+				data: "001004a0480e",
+				path: ""
+			},
+
+			{
+				name: "Stage 4",// empty with 1 ahu -
+				size: 5, x: 2, y: 2, wood: 8, rock: 3, mana: 8,
+				map: "f7c0000000c0",
+				data: "0000",
+				path: ""
+			},
+			/*{
+				name: "Stage 3",// empty with 1 ahu -
+				size: 5, x: 2, y: 2, wood: 8, rock: 3, mana: 8,
+				map: "f7c0000000c0",
+				data: "0000",
+				path: ""
+			},*/
+			/*{
+				name: "Stage 3",// empty with 1 ahu ^
+				size: 5, x: 2, y: 2, wood: 8, rock: 3, mana: 8,
+				map: "f7f0080000c0",
+				data: "0000",
+				path: ""
+			},*/
+			/*{
+				name: "Stage",// empty with 3 ahus
+				size: 5, x: 2, y: 2, wood: 5, rock: 3, mana: 16,
+				map: "d5c0000000083",
+				data: "0000",
+				path: ""
+			},*/
+			/*{
+				name: "Stage 3",
 				size: 5, x: 2, y: 2, wood: 5, rock: 3, mana: 5,
 				map: "c4f0308000c0",
 				data: "00020010500d",
 				path: ""
-			},
+			},*/
 			{
-				name: "Stage 1",
-				size: 5, x: 2, y: 2, wood: 5, rock: 3, mana: 5,
+				name: "Stage 6",
+				size: 5, x: 2, y: 2, wood: 5, rock: 3, mana: 16,
 				map: "d5c0022800083",
 				data: "00007c424ec2c",
 				path: ""
 			},
 			{
-				name: "Stage 2",
-				size: 5, x: 3, y: 0, wood: 5, rock: 3, mana: 5,
-				map: "00033c000c",
-				data: "007c424ec2c",
-				path: "   26d",
-			}
+				name: "Stage 3",
+				size: 5, x: 2, y: 2, wood: 5, rock: 3, mana: 16,
+				map: "d5c0022800083",
+				data: "00007c424ec2c",
+				path: ""
+			},
+			
 		];
 
 		obj[id].id = id;
