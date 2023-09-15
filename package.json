@@ -10,7 +10,7 @@
 	"main": "src/scripts/app.js",
 	"scripts": {
 		"preinstall": "npx npm-force-resolutions",
-		"build": "npx del-cli public --force && gulp --dir public --pwa --mobile",
+		"build": "npx del-cli public --force && gulp --dir public --mobile",
 		"debug": "npx del-cli public --force && gulp --dir public --pwa --mobile --debug",
 		"start": "npx del-cli public/index.html gulp sync --dir public --pwa --mobile",
 		"pack": "npx del-cli public --force && gulp pack --dir public --pwa --mobile",

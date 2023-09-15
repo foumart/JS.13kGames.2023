@@ -45,7 +45,7 @@ class Unit extends Tile {
 
 	// Changes a Rock (Mountain) into Moai statue
 	convertToMoai() {
-		board.unitsData[this.y][this.x] = 5;
+		if (state) board.unitsData[this.y][this.x] = 5;
 		this.highlighted = false;
 		this.type = 5;
 		this.H = 20;

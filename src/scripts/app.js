@@ -16,7 +16,7 @@ function isTouchDevice() {
 }
 
 let state = 0;// -1: zoomed out Earth with animated logo, 0: zoomed in Isle view Title screen, 1-2 changes when starting a level
-let stage = 3;// 0 - title screen, > 1 - directly load any level (state should be 0)
+let stage = 0;// 0 - title screen, > 1 - directly load any level (state should be 0)
 
 let turn;
 let step;
